@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0c0d10;
+  --color-surface: #15171b;
+  --color-surface-2: #1a1d22;
+  --color-hairline: #262931;
+  --color-text: #e8e9eb;
+  --color-text-dim: #6b7280;
+  --color-text-dimmer: #44484f;
+  --color-accent: #ff8b3d;
+  --color-accent-dim: #ff8b3d33;
+  --color-green: #4ade80;
+  --color-blue: #60a5fa;
+  --color-accent-rgb: 255, 153, 0;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-hairline: var(--color-hairline);
+  --color-text: var(--color-text);
+  --color-text-dim: var(--color-text-dim);
+  --color-text-dimmer: var(--color-text-dimmer);
+  --color-accent: var(--color-accent);
+  --color-accent-dim: var(--color-accent-dim);
+  --color-green: var(--color-green);
+  --color-blue: var(--color-blue);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease forwards;
+}
+
+.animate-page-in {
+  animation: page-in 0.22s ease;
+}
+
+/* Respect reduced-motion preferences across the custom animations above. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-page-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes terminal-attention {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  15% {
+    transform: translateY(-4px);
+  }
+  30% {
+    transform: translateY(0);
+  }
+}
+
+.animate-terminal-attention {
+  animation: terminal-attention 0.6s ease-out 1;
+}
