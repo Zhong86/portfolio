@@ -165,7 +165,7 @@ export default function Terminal() {
       return;
     }
 
-    if (cmd === "talos") {
+    if (cmd === "talos_ai") {
       const prompt = parts.slice(1).join(" ");
       if (!chatMode) {
         setChatMode(true);
