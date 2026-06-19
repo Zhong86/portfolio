@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
@@ -30,12 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${ibmPlexMono.variable} ${inter.variable}`}>
       <body className="antialiased font-sans">
+        <Analytics />
         <MobileNav />
         <div className="flex max-w-[1180px] mx-auto">
           <Sidebar />
           <main className="flex-1 min-w-0 px-0 md:px-14 pb-19 md:pb-22">
             {children}
-        <Terminal />
+            <Terminal />
           </main>
         </div>
       </body>
