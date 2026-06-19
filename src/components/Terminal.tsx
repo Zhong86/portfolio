@@ -260,7 +260,7 @@ export default function Terminal() {
               <span className="w-2 h-2 rounded-full bg-green animate-pulse" aria-hidden />
               <span className="font-mono text-[13px] text-green">
                 Zhong86<span className="text-accent">:~$</span>{" "}
-                <span className="text-text-dimmer">ask Talos</span>
+                <span className="text-text-dimmer">ask Talos - coding, work or even hobbies</span>
               </span>
             </div>
             <button
@@ -276,8 +276,6 @@ export default function Terminal() {
             {messages.length === 0 && !streaming && (
               <div className="flex items-center justify-center h-full">
                 <p className="font-mono text-[12px] text-text-dimmer text-center leading-relaxed">
-                  Ask Talos about Zhong86's coding, profession or even hobbies.
-                  <br />
                   <span className="text-accent/60">Session only — messages won't be saved.</span>
                 </p>
               </div>

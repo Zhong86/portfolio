@@ -1,13 +1,26 @@
 # CODING
 
-## Game Development
-I have learned coding since 2022, with Python as my first language. 
-Focused more on Game Development instead of Software Engineer at the time and learned the basics of coding through Unity. 
-Never managed to release any games on the public due to copyright. 
+## Tech Stacks
+Main languages are Python and TypeScript. 
+- Started with Python for MiddleSchool but then deal with C# for game development.
+- Use JS (React) as my main language for Web Development along with PHP (Laravel). 
+- Briefly learned Java (Springboot) for backend. 
+- Used Python for LangChain, LangGraph AI projects.
+- Learned AWS - EC2, RDS, S3, and the basics of CI/CD
 
-## Software Engineer
-Started to learn and be interested in Software Engineering at 2025. 
-Prioritized websites over Mobile apps because the latter felt a lot more difficult when I tried it previously. 
-Learned the basics of web development with HTML, CSS, JS. Then started on learning React and Express JS for a fullstack project. 
-Because of pure CSS, I leaned more towards the Backend side of Web Development and focused on databases, APIs, and system architecture. 
-Also used Laravel for internship and learned the basics of TailwindCSS. 
+## Projects
+### File Reading Agent
+**Stack:** Python, LangGraph
+Created a tool for an internal AI Agent at DBKlik that allows it to read CSV, XLSX, and PDF files. Uses RAG chunk system for PDF along with Pandas generated scripts by a LLM that is passed to the agent. Heavily reduces token usage and increases efficiency.
+### Automated Job Searching
+**Stack:** TypeScript, NextJS, Python, LangGraph, Supabase
+Automating the process of job searching for users and filters jobs that matches with user's preferences.
+### Automated Purchase Order Agent
+**Stack:** Python, LangGraph
+Collaborated in a project that automates the process of Purchase Orders for DBKlik.
+### GoogleMeet AI
+**Stack:** Openclaw, TypeScript
+AI bot that summarizes Google Meet for DBKlik. Recording is transcribed with FastWhisper and summarized to be sent to the Whatsapp group.
+### DBJobs: Job Portal Website
+**Stack:** Laravel, PHP
+Job portal website made during DBKlik internship. Handled the fullstack development while collaborating with System Analyst and UI/UX designer.
