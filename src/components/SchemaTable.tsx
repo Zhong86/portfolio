@@ -5,11 +5,12 @@ type SchemaField = {
 };
 
 const fields: SchemaField[] = [
-  { field: "role", type: "string", value: "FullStack Developer" },
+  { field: "roles", type: "string[]", value: "FullStack Developer, AI Agent Engineer" },
   { field: "focus", type: "string[]", value: "AI Automated Systems, FullStack Applications" },
   { field: "tech_stack", type: "string[]", value: "Python, PHP, TypeScript, LangChain, React, Laravel" },
   { field: "occupation", type: "string", value: "FullStack Intern @ DBKlik" },
   { field: "months_active", type: "int", value: "3" },
+  { field: "looking_for", type: "string[]", value: "Remote paid internships" },
 ];
 
 export default function SchemaTable() {

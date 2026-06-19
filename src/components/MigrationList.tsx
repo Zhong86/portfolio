@@ -75,11 +75,10 @@ function MigrationItem({ migration }: { migration: Migration }) {
           <span className="font-mono text-sm text-text">{migration.title}</span>
         </div>
         <span
-          className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded ${
-            migration.status === "PROD"
+          className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded ${migration.status === "PROD"
               ? "bg-accent-dim text-accent"
               : "bg-hairline text-text-dim"
-          }`}
+            }`}
         >
           {migration.status}
         </span>
@@ -101,7 +100,10 @@ function MigrationItem({ migration }: { migration: Migration }) {
           </div>
           <div className="flex gap-4 mt-4 font-mono text-[12.5px]">
             {migration.links.map((link) => (
-              <a key={link.label} href={link.href} className="text-blue hover:text-accent">
+              <a key={link.label} href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue hover:text-accent">
                 → {link.label}
               </a>
             ))}
