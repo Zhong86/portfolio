@@ -381,7 +381,7 @@ export default function Terminal() {
             }`}
         >
           <div className="px-4 py-2 border-b border-hairline/60 font-mono text-[10px] text-text-dimmer uppercase tracking-wide flex justify-between">
-            <span>navigate</span>
+            <span>Commands</span>
             <span>↑↓ select · tab fill · enter go</span>
           </div>
           <div ref={listRef} className="max-h-52 overflow-y-auto py-1">
