@@ -19,7 +19,7 @@ const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd about", label: "about me", keyword: "about" },
   { cmd: "cd projects", label: "projects applied / built", keyword: "projects" },
   { cmd: "cd contact", label: "contact info", keyword: "contact" },
-  { cmd: "talos ", label: "ask Talos", keyword: "ai" },
+  { cmd: "talos_ai", label: "ask AI ", keyword: "ai" },
 ];
 
 function fuzzyMatch(query: string, target: string): boolean {
