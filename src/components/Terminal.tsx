@@ -193,6 +193,7 @@ export default function Terminal() {
       setStreamingText("");
       setValue("");
       setExiting(false);
+      inputRef.current?.blur();
     }, 200); // match animation duration
   }
 
