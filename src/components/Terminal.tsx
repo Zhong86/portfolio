@@ -43,7 +43,9 @@ export default function Terminal() {
 
   // Chat state
   const [chatMode, setChatMode] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: "Hi I'm Talos, an AI specified to answer your questions about Zhong86. You can ask anything from his coding journey, experience and hobbies. I can even send him a message from you as long as you provide a name. " }
+  ]);
   const [streaming, setStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState("");
   const [exiting, setExiting] = useState(false);
@@ -255,28 +257,36 @@ export default function Terminal() {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3 border-b border-hairline/60 shrink-0">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-green animate-pulse" aria-hidden />
-              <span className="font-mono text-[13px] text-green">
-                Zhong86<span className="text-accent">:~$</span>{" "}
-                <span className="text-text-dimmer">ask Talos - coding, work or even hobbies</span>
-              </span>
+          <div className="border-b border-hairline/60 px-5 py-3  shrink-0 ">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-green animate-pulse" aria-hidden />
+                <span className="font-mono text-[13px] text-green">
+                  Zhong86<span className="text-accent">:~$</span>{" "}
+                  <span className="text-text-dimmer">ask anything - coding, work or even hobbies</span>
+                </span>
+              </div>
+              <button
+                onClick={exitChat}
+                className="font-mono text-[11px] text-text-dimmer hover:text-accent transition-colors px-2 py-1 rounded hover:bg-surface-3/60"
+              >
+                esc · exit
+              </button>
             </div>
-            <button
-              onClick={exitChat}
-              className="font-mono text-[11px] text-text-dimmer hover:text-accent transition-colors px-2 py-1 rounded hover:bg-surface-3/60"
-            >
-              esc · exit
-            </button>
+            {messages.length !== 0 && (
+              <p className="font-mono text-[10px] text-text-dimmer text-left leading-relaxed">
+                Talos does not have memory.
+              </p>
+            )}
           </div>
+
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 min-h-0">
             {messages.length === 0 && !streaming && (
               <div className="flex items-center justify-center h-full">
                 <p className="font-mono text-[12px] text-text-dimmer text-center leading-relaxed">
-                  <span className="text-accent/60">Session only — messages won't be saved.</span>
+                  <span className="text-accent/60">Talos does not have memory - messages are independent.</span>
                 </p>
               </div>
             )}

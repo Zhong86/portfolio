@@ -4,8 +4,7 @@ import LogStream from "@/components/LogStream";
 import { useEffect, useState } from "react";
 
 const STARTDATE = "2025-06-01T00:00:00Z";
-const INFORMATION=`I deal with both the frontend and backend of applications.
-API handling, routing and databases are my preference over styling. Independent learner for majority of my career.
+const INFORMATION=`Full-stack developer focusing in backend engineering: API design, routing, and database architecture, with frontend experience as needed. Self-directed learner throughout my career.
 `;
 
 function formatDurationYearsMonths(years: number, months: number) {

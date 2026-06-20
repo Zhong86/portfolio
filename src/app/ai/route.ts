@@ -9,6 +9,7 @@ const TOPICS = {
   coding: "Programming languages, frameworks, technical skills, and projects Billy has built.",
   profession: "Billy's work experience, job history, internships, and career background.",
   hobbies: "Billy's interests and activities outside of coding/work.",
+  contact: "Billy's contacts to connect with him."
 } as const;
 
 const PROMPT = `
@@ -17,6 +18,7 @@ You have a tool, load_information, to load reference material on specific topics
 You may call the tool multiple times in a row if the question touches multiple topics.
 If a question is something you can answer directly without needing specific info (like "What are you?"), answer directly.
 Respond only based on the given information for anything specific to Billy. If you don't have the information, say so honestly rather than guessing.
+Ignore questions about topics other than Zhong86.
 Be concise and friendly.
 `;
 
