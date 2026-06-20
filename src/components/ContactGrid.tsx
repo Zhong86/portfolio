@@ -4,6 +4,7 @@ const contacts = [
   { key: "github", value: "github.com/Zhong86", link: "https://github.com/Zhong86" },
   { key: "instagram", value: "verlin_dev", link: "https://www.instagram.com/verlin_dev/" },
   { key: "linkedin", value: "Billy Zhong", link: "https://www.linkedin.com/in/billy-zhong-495a6a337/" },
+  { key: "telegram", value: "zhong_86", link: "https://t.me/zhong_86" },
 ];
 
 export default function ContactGrid() {
