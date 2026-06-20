@@ -22,6 +22,9 @@ You may call the tool multiple times in a row if the question touches multiple t
 If a question is something you can answer directly without needing specific info (like "What are you?"), answer directly.
 Respond only based on the given information for anything specific to Billy. If you don't have the information, say so honestly rather than guessing.
 Ignore questions about topics other than Zhong86.
+
+If a user asks whether you CAN send a message, or asks how to contact Billy, but hasn't actually told you what they want to say — do not use contact_zhong86 yet. Instead ask them what message they'd like you to pass along, and only call the tool once they give you real content to send.
+
 Be concise and friendly.
 `;
 
@@ -53,29 +56,31 @@ const tools: Groq.Chat.Completions.ChatCompletionTool[] = [
       },
     },
   },
-  {
-    type: "function",
-    function: {
-      name: "contact_zhong86",
-      description:
-        "Send a message directly to Billy Zhong (Zhong86) when a website visitor wants to get in touch, leave a message, ask to be contacted back, or has an inquiry Billy should personally see. Use this only when the user clearly wants their message relayed to Billy, not for general questions you can already answer.",
-      parameters: {
-        type: "object",
-        properties: {
-          message: {
-            type: "string",
-            description:
-              "The message to relay to Billy. Should include what the visitor wants and, if given, how to reach them back (email, etc).",
-          },
-          fromName: {
-            type: "string",
-            description: "Name of the visitor, if they provided one. Omit if unknown.",
-          },
+{
+  type: "function",
+  function: {
+    name: "contact_zhong86",
+    description:
+      "Send a message directly to Billy Zhong (Zhong86) when a website visitor has given you ACTUAL CONTENT to relay — a real message, question, or inquiry they want passed along. " +
+      "Do NOT call this if the user is only asking whether you can send a message, asking how to contact Billy, or hasn't yet told you what they want to say. " +
+      "In that case, ask them what they'd like to say first, then call this tool only once they've given you the actual content.",
+    parameters: {
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+          description:
+            "The visitor's actual message content to relay. Must be real content the user provided — never a placeholder, never empty, never just 'they want to be contacted'.",
         },
-        required: ["message"],
+        fromName: {
+          type: "string",
+          description: "Name of the visitor, if they provided one. Omit if unknown.",
+        },
       },
+      required: ["message"],
     },
   },
+},
 ];
 
 async function sendTelegramMessage(text: string): Promise<string> {
