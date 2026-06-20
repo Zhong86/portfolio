@@ -1,3 +1,6 @@
+import { Agent, setGlobalDispatcher } from "undici";
+setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
+
 import Groq from "groq-sdk";
 import fs from "fs";
 import path from "path";
@@ -50,7 +53,54 @@ const tools: Groq.Chat.Completions.ChatCompletionTool[] = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "contact_zhong86",
+      description:
+        "Send a message directly to Billy Zhong (Zhong86) when a website visitor wants to get in touch, leave a message, ask to be contacted back, or has an inquiry Billy should personally see. Use this only when the user clearly wants their message relayed to Billy, not for general questions you can already answer.",
+      parameters: {
+        type: "object",
+        properties: {
+          message: {
+            type: "string",
+            description:
+              "The message to relay to Billy. Should include what the visitor wants and, if given, how to reach them back (email, etc).",
+          },
+          fromName: {
+            type: "string",
+            description: "Name of the visitor, if they provided one. Omit if unknown.",
+          },
+        },
+        required: ["message"],
+      },
+    },
+  },
 ];
+
+async function sendTelegramMessage(text: string): Promise<string> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) {
+    return "Telegram is not configured on the server.";
+  }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text }),
+    });
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error("Telegram send failed:", res.status, errBody);
+      return "Failed to deliver the message to Billy.";
+    }
+    return "Message delivered to Billy.";
+  } catch (err) {
+    console.error("Telegram send error:", err);
+    return "Failed to deliver the message to Billy.";
+  }
+}
 
 function errorResponse(message: string) {
   return new Response(message, {
@@ -61,7 +111,7 @@ function errorResponse(message: string) {
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json(); 
+    const { messages } = await req.json();
 
     let working: Groq.Chat.Completions.ChatCompletionMessageParam[] = [
       { role: "system", content: PROMPT },
@@ -70,7 +120,7 @@ export async function POST(req: Request) {
 
     let resolving = true;
     let iterations = 0;
-    const MAX_ITERATIONS = 3;
+    const MAX_ITERATIONS = 2;
 
     while (resolving && iterations < MAX_ITERATIONS) {
       iterations++;
@@ -104,17 +154,27 @@ export async function POST(req: Request) {
         for (const call of toolCalls) {
           try {
             const args = JSON.parse(call.function.arguments);
-            const fileContents = loadInformation(args.topic);
+
+            let result: string;
+            if (call.function.name === "load_information") {
+              result = loadInformation(args.topic);
+            } else if (call.function.name === "contact_zhong86") {
+              const text = `Portfolio ${args.fromName ? ` - ${args.fromName}` : ""}:\n\n${args.message}`;
+              result = await sendTelegramMessage(text);
+            } else {
+              result = `Unknown tool: ${call.function.name}`;
+            }
+
             working.push({
               role: "tool",
               tool_call_id: call.id,
-              content: fileContents,
+              content: result,
             });
           } catch {
             working.push({
               role: "tool",
               tool_call_id: call.id,
-              content: "Error loading information for this topic.",
+              content: "Error executing this tool call.",
             });
           }
         }

@@ -44,7 +44,7 @@ export default function Terminal() {
   // Chat state
   const [chatMode, setChatMode] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hi I'm Talos, an AI specified to answer your questions about Zhong86. You can ask anything from his coding journey, experience and hobbies. I can even send him a message from you as long as you provide a name. " }
+    { role: 'assistant', content: "Hi I'm Talos, an AI specified to answer your questions about Zhong86. You can ask anything from his coding journey, experience and hobbies. I can even send him a message from you - make sure you provide a name. " }
   ]);
   const [streaming, setStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState("");
@@ -275,7 +275,7 @@ export default function Terminal() {
             </div>
             {messages.length !== 0 && (
               <p className="font-mono text-[10px] text-text-dimmer text-left leading-relaxed">
-                Talos does not have memory.
+                Session only - messages won't be saved.
               </p>
             )}
           </div>
@@ -286,7 +286,7 @@ export default function Terminal() {
             {messages.length === 0 && !streaming && (
               <div className="flex items-center justify-center h-full">
                 <p className="font-mono text-[12px] text-text-dimmer text-center leading-relaxed">
-                  <span className="text-accent/60">Talos does not have memory - messages are independent.</span>
+                  <span className="text-accent/60">Session only - messages won't be saved.</span>
                 </p>
               </div>
             )}
