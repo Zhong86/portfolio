@@ -71,6 +71,7 @@ export default function Terminal() {
 
   useEffect(() => {
     const t = setTimeout(() => setAttention(false), 2200);
+    console.log(process.env.SUDO_PASSWORD);
     return () => clearTimeout(t);
   }, []);
 
@@ -115,12 +116,17 @@ export default function Terminal() {
     }, 200);
   }
 
-  function submitSudoPassword() {
-    if (sudoPassword === process.env.SUDO_PASSWORD) {
+  async function submitSudoPassword() {
+    const res = await fetch("/api/sudo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: sudoPassword }),
+    });
+    if (res.ok) {
       sessionStorage.setItem("sudoUnlocked", "true");
       setSudoUnlocked(true);
       closeSudo();
-      showError("✓ sudo: session unlocked");   
+      showError("✓ sudo: session unlocked");
       return;
     }
 
@@ -137,8 +143,8 @@ export default function Terminal() {
     }
   }
 
-  function handleSudoKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") { e.preventDefault(); submitSudoPassword(); }
+  async function handleSudoKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") { e.preventDefault(); await submitSudoPassword(); }
     if (e.key === "Escape") closeSudo();
   }
 
