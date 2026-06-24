@@ -14,10 +14,10 @@ type Migration = {
 const migrations: Migration[] = [
   {
     num: "0005",
-    title: "File Reading Agent",
+    title: "Orchestrator Agent",
     status: "PROD",
     description:
-      "Created a tool for an internal AI Agent at DBKlik that allows it to read CSV, XLSX, and PDF files. Uses RAG chunk system for PDF along with Pandas generated scripts by a LLM that is passed to the agent. Heavily reduces token usage and increases efficiency.",
+      "Collaborated in creating an AI agent for DBKlik that allows it to access internal database with Read permissions along with dealing with Excel, and PDF files. The AI relies on different Skill.md that will be loaded based on agent's needs. SQL Queries and scripts to read Excel file are created by the AI agent to allow reusability. The system heavily reduces token usage and increases efficiency.",
     stack: ["Python", "LangGraph"],
     links: [{ label: "RAG", href: "https://aws.amazon.com/id/what-is/retrieval-augmented-generation/" }],
   },
