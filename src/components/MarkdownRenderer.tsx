@@ -165,12 +165,12 @@ export default function MarkdownRenderer({ content }: { content: string }) {
   const tokens = tokenize(content);
 
   const hClasses: Record<number, string> = {
-    1: "font-mono text-[20px] font-semibold text-text mt-6 mb-3 leading-snug",
-    2: "font-mono text-[16px] font-semibold text-text mt-5 mb-2.5 leading-snug",
-    3: "font-mono text-[14px] font-semibold text-accent mt-4 mb-2",
-    4: "font-mono text-[13px] font-semibold text-text-dim mt-3 mb-1.5",
-    5: "font-mono text-[12px] font-medium text-text-dim mt-3 mb-1",
-    6: "font-mono text-[11px] font-medium text-text-dimmer uppercase tracking-wide mt-3 mb-1",
+    1: "font-mono text-[20px] font-semibold text-text mt-3 mb-2 leading-snug",
+    2: "font-mono text-[16px] font-semibold text-text mt-3 mb-1.5 leading-snug",
+    3: "font-mono text-[14px] font-semibold text-accent mt-2 mb-1",
+    4: "font-mono text-[13px] font-semibold text-text-dim mt-2 mb-0.5",
+    5: "font-mono text-[12px] font-medium text-text-dim mt-1 mb-0.5",
+    6: "font-mono text-[11px] font-medium text-text-dimmer uppercase tracking-wide mt-1 mb-0.5",
   };
 
   const H_TAGS = {
