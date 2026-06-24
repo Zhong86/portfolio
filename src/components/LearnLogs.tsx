@@ -311,7 +311,7 @@ export default function LearnLogs() {
         </div>
       )}
 
-      <div className="max-h-[500px] overflow-y-auto scrollbar-none">
+      <div className="max-h-[600px] overflow-y-auto scrollbar-none">
         {loading ? (
           <div className="flex flex-col gap-2">
             {[1, 2, 3].map((i) => (
@@ -321,7 +321,7 @@ export default function LearnLogs() {
         ) : logs.length === 0 ? (
           <p className="font-mono text-[12px] text-center text-text-dimmer">no logs yet</p>
         ) : (
-          <div className="flex flex-col gap-2 max-h-[300px]">
+          <div className="flex flex-col gap-2">
             {logs.map((log) => (
               <LogCard
                 key={log.slug}
