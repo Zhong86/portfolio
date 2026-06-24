@@ -1,37 +1,42 @@
-import fs from "fs";
-import path from "path";
+import { kv } from "@vercel/kv";
 
-const LOGS_DIR = path.join(process.cwd(), "learn_logs");
-
-function ensureDir() {
-  if (!fs.existsSync(LOGS_DIR)) fs.mkdirSync(LOGS_DIR, { recursive: true });
+interface LogEntry {
+  title: string;
+  slug: string;
+  date: string;
+  content: string;
 }
 
 function isSudo(req: Request): boolean {
   return req.headers.get("x-sudo-token") === process.env.SUDO_PASSWORD;
 }
 
-function slugToDate(slug: string): string {
-  return slug.split("_").slice(1, 2).join("_");
-}
-
+// Helper to format title from the slug
 function extractTitle(slug: string): string {
   return slug.split("_").slice(0, -1).join("_").replace(/-/g, " ");
 }
 
 // GET /api/logs — return all logs sorted newest first
 export async function GET() {
-  ensureDir();
-  const files = fs.readdirSync(LOGS_DIR).filter((f) => f.endsWith(".md"));
-  const logs = files
-    .map((file) => {
-      const slug = file.replace(".md", "");
-      const content = fs.readFileSync(path.join(LOGS_DIR, file), "utf-8");
-      return { title: extractTitle(slug), slug, date: slugToDate(slug), content };
-    })
-    .sort((a, b) => b.date.localeCompare(a.date));
+  try {
+    // Fetch all logs stored under the 'logs' hash map
+    const logsMap = await kv.hgetall<Record<string, Omit<LogEntry, "slug" | "title">>>("logs");
+    
+    if (!logsMap) {
+      return Response.json([]);
+    }
 
-  return Response.json(logs);
+    const logs: LogEntry[] = Object.entries(logsMap).map(([slug, data]) => ({
+      slug,
+      title: extractTitle(slug),
+      date: data.date,
+      content: data.content,
+    })).sort((a, b) => b.date.localeCompare(a.date));
+
+    return Response.json(logs);
+  } catch (error) {
+    return Response.json({ error: "Failed to fetch logs" }, { status: 500 });
+  }
 }
 
 // POST /api/logs — create or overwrite a log entry
@@ -39,7 +44,6 @@ export async function POST(req: Request) {
   if (!isSudo(req)) {
     return new Response("Unauthorized", { status: 401 });
   }
-  ensureDir();
 
   const { date, title, content } = await req.json();
   if (!date || !title || typeof content !== "string") {
@@ -50,10 +54,20 @@ export async function POST(req: Request) {
     return new Response("Invalid date format", { status: 400 });
   }
 
-  const filePath = path.join(LOGS_DIR, `${title}_${date}.md`);
-  fs.writeFileSync(filePath, content, "utf-8");
+  // Create a clean slug matching your original structure
+  const cleanTitle = title.replace(/\s+/g, "-");
+  const slug = `${cleanTitle}_${date}`;
 
-  return Response.json({ ok: true, filePath });
+  try {
+    // Save to the 'logs' hash map using the slug as the unique field
+    await kv.hset("logs", {
+      [slug]: { date, content }
+    });
+
+    return Response.json({ ok: true, slug });
+  } catch (error) {
+    return Response.json({ error: "Failed to save log" }, { status: 500 });
+  }
 }
 
 // DELETE /api/logs — delete a log entry
@@ -65,8 +79,11 @@ export async function DELETE(req: Request) {
   const { slug } = await req.json();
   if (!slug) return new Response("Missing slug", { status: 400 });
 
-  const filePath = path.join(LOGS_DIR, `${slug}.md`);
-  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-
-  return Response.json({ ok: true });
+  try {
+    // Remove the specific slug field from our 'logs' hash map
+    await kv.hdel("logs", slug);
+    return Response.json({ ok: true });
+  } catch (error) {
+    return Response.json({ error: "Failed to delete log" }, { status: 500 });
+  }
 }
