@@ -10,6 +10,7 @@ const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd home", label: "go to homepage", keyword: "home" },
   { cmd: "cd about", label: "about me", keyword: "about" },
   { cmd: "cd projects", label: "projects applied / built", keyword: "projects" },
+  { cmd: "cd learn", label: "learn logs", keyword: "learn" },
   { cmd: "cd contact", label: "contact info", keyword: "contact" },
   { cmd: "talos_ai", label: "ask AI", keyword: "ai" },
 ];
@@ -97,7 +98,6 @@ export default function Terminal() {
   function openSudo() {
     setSudoPassword("");
     setSudoError(null);
-    sessionStorage.setItem("sudoUnlocked", "true");
     sessionStorage.removeItem("sudoAttempts");
     setSudoAttempts(0);
     setSudoExiting(false);
@@ -124,6 +124,7 @@ export default function Terminal() {
     });
     if (res.ok) {
       sessionStorage.setItem("sudoUnlocked", "true");
+      sessionStorage.setItem("sudoToken", sudoPassword);  // ← add this
       setSudoUnlocked(true);
       closeSudo();
       showError("✓ sudo: session unlocked");

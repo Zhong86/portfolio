@@ -12,8 +12,11 @@ function isSudo(req: Request): boolean {
 }
 
 function slugToDate(slug: string): string {
-  // slug is YYYY-MM-DD
-  return slug;
+  return slug.split("_").slice(1, 2).join("_");
+}
+
+function extractTitle(slug: string): string {
+  return slug.split("_").slice(0, -1).join("_").replace(/-/g, " ");
 }
 
 // GET /api/logs — return all logs sorted newest first
@@ -24,7 +27,7 @@ export async function GET() {
     .map((file) => {
       const slug = file.replace(".md", "");
       const content = fs.readFileSync(path.join(LOGS_DIR, file), "utf-8");
-      return { slug, date: slugToDate(slug), content };
+      return { title: extractTitle(slug), slug, date: slugToDate(slug), content };
     })
     .sort((a, b) => b.date.localeCompare(a.date));
 
@@ -38,20 +41,19 @@ export async function POST(req: Request) {
   }
   ensureDir();
 
-  const { slug, content } = await req.json();
-  if (!slug || typeof content !== "string") {
-    return new Response("Missing slug or content", { status: 400 });
+  const { date, title, content } = await req.json();
+  if (!date || !title || typeof content !== "string") {
+    return new Response("Missing date or content", { status: 400 });
   }
 
-  // Validate slug is a date format YYYY-MM-DD
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(slug)) {
-    return new Response("Invalid slug format", { status: 400 });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return new Response("Invalid date format", { status: 400 });
   }
 
-  const filePath = path.join(LOGS_DIR, `${slug}.md`);
+  const filePath = path.join(LOGS_DIR, `${title}_${date}.md`);
   fs.writeFileSync(filePath, content, "utf-8");
 
-  return Response.json({ ok: true, slug });
+  return Response.json({ ok: true, filePath });
 }
 
 // DELETE /api/logs — delete a log entry

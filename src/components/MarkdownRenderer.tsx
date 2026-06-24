@@ -13,7 +13,8 @@ type Token =
   | { type: "code_block"; lang: string; code: string }
   | { type: "ul"; items: string[] }
   | { type: "ol"; items: string[] }
-  | { type: "p"; text: string };
+  | { type: "p"; text: string }
+  | { type: "br"; text: string };
 
 function parseInline(text: string): React.ReactNode {
   // Process inline: **bold**, *italic*, `code`, [label](url)
@@ -151,14 +152,8 @@ function tokenize(md: string): Token[] {
     }
 
     // Paragraph
-    const paraLines: string[] = [];
-    while (i < lines.length && lines[i].trim() !== "" && !lines[i].startsWith("#") && !lines[i].startsWith("```") && !lines[i].startsWith("> ") && !/^[-*]\s/.test(lines[i]) && !/^\d+\.\s/.test(lines[i]) && !/^---+$/.test(lines[i])) {
-      paraLines.push(lines[i]);
-      i++;
-    }
-    if (paraLines.length > 0) {
-      tokens.push({ type: "p", text: paraLines.join(" ") });
-    }
+    tokens.push({ type: "p", text: line });
+    i++;
   }
 
   return tokens;
@@ -246,7 +241,12 @@ export default function MarkdownRenderer({ content }: { content: string }) {
         if (token.type === "p") {
           return (
             <p key={idx} className="font-sans text-[14px] text-text-dim leading-relaxed my-3">
-              {parseInline(token.text)}
+              {token.text.split("\n").map((line, li, arr) => (
+                <React.Fragment key={li}>
+                  {parseInline(line)}
+                  {li < arr.length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </p>
           );
         }
