@@ -45,11 +45,9 @@ function LogCard({
         onClick={() => setOpen((v) => !v)}
         className="w-full flex justify-between items-center px-4 py-3.5 bg-surface hover:bg-surface-2 transition-colors text-left"
       >
-        {/* CHANGED: Added overflow-hidden to this container so the title can scroll inside it without breaking the flex layout */}
-        <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+        <div className="flex items-center gap-3 min-w-0 ">
           <span className="font-mono text-[11px] text-text-dimmer shrink-0">{log.date}</span>
 
-          {/* CHANGED: Swapped 'truncate' for overflow scrolling and custom scrollbar hiding */}
           <span className="font-mono text-[13px] text-text whitespace-nowrap overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {log.title || formatDisplayDate(log.slug)}
           </span>
@@ -313,7 +311,7 @@ export default function LearnLogs() {
         </div>
       )}
 
-      <div className="max-h-[500px]">
+      <div className="max-h-[500px] overflow-y-auto scrollbar-none">
         {loading ? (
           <div className="flex flex-col gap-2">
             {[1, 2, 3].map((i) => (
@@ -323,7 +321,7 @@ export default function LearnLogs() {
         ) : logs.length === 0 ? (
           <p className="font-mono text-[12px] text-center text-text-dimmer">no logs yet</p>
         ) : (
-          <div className="flex flex-col gap-2 overflow-y-auto max-h-[300px]">
+          <div className="flex flex-col gap-2 max-h-[300px]">
             {logs.map((log) => (
               <LogCard
                 key={log.slug}
