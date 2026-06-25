@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { resolveCdTarget } from "@/lib/navigation";
 
+const MAX_MESSAGES = 5;
+
 type PaletteItem = { cmd: string; label: string; keyword: string };
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -154,7 +156,7 @@ export default function Terminal() {
   async function handleAsk(prompt: string) {
     if (!prompt.trim() || streaming) return;
     const userMsg: Message = { role: "user", content: prompt };
-    const history = [...messages, userMsg];
+    const history = [...messages, userMsg].slice(-MAX_MESSAGES);
     setMessages(history);
     setValue("");
     setStreaming(true);

@@ -25,7 +25,7 @@ Ignore questions about topics other than Zhong86.
 
 If a user asks whether you CAN send a message, or asks how to contact Billy, but hasn't actually told you what they want to say — do not use contact_zhong86 yet. Instead ask them what message they'd like you to pass along, and only call the tool once they give you real content to send.
 
-Be concise and friendly.
+Be concise and friendly. Make sure your tone is casual but professional - sentences maximum 2 to 3 sentences long.
 `;
 
 function loadInformation(topic: string): string {
