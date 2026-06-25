@@ -25,6 +25,26 @@ function sudoToken(): string {
   return sessionStorage.getItem("sudoToken") ?? "";
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      style={{ position: 'absolute', top: '10px', right: '16px', zIndex: 10 }}
+      className="font-mono text-[10px] px-2 py-0.5 rounded border border-hairline text-text-dimmer hover:text-text hover:border-text-dimmer transition-colors"
+    >
+      {copied ? "copied ✓" : "copy"}
+    </button>
+  );
+}
+
 function LogCard({
   log,
   isSudo,
@@ -39,7 +59,7 @@ function LogCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border border-hairline rounded-md overflow-hidden">
+    <div className="border border-hairline rounded-md">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -86,7 +106,8 @@ function LogCard({
       </button>
 
       {open && (
-        <div className="px-5 py-4 border-t border-hairline bg-surface">
+        <div className="px-5 py-4 border-t border-hairline bg-surface relative">
+          <CopyButton text={log.content} />
           <MarkdownRenderer content={log.content} />
         </div>
       )}
@@ -292,7 +313,8 @@ export default function LearnLogs() {
   }
 
   return (
-    <div>
+    <div style={{ maxHeight: '500px', overflowY: 'auto', scrollbarWidth: 'none',
+      paddingLeft: '12px', paddingRight: '12px'}}>
       {isSudo && (
         <div className="flex items-center justify-between mb-7">
           <button
@@ -311,7 +333,7 @@ export default function LearnLogs() {
         </div>
       )}
 
-      <div className="max-h-[600px] overflow-y-auto scrollbar-none">
+      <div >
         {loading ? (
           <div className="flex flex-col gap-2">
             {[1, 2, 3].map((i) => (
