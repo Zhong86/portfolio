@@ -161,7 +161,6 @@ function LangBar({ langs }: { langs: Record<string, number> }) {
 
 export default function GithubStats({ username }: { username: string }) {
   const [user, setUser] = useState<UserData | null>(null);
-  const [repos, setRepos] = useState<Repo[]>([]);
   const [langs, setLangs] = useState<Record<string, number>>({});
   const [contribWeeks, setContribWeeks] = useState<{ contributionDays: ContribDay[] }[]>([]);
   const [totalContribs, setTotalContribs] = useState(0);
@@ -184,7 +183,6 @@ export default function GithubStats({ username }: { username: string }) {
         setUser(userData);
 
         const ownRepos = reposData.filter((r) => !r.fork);
-        setRepos(ownRepos);
 
         // Language aggregation
         const langCount: Record<string, number> = {};
