@@ -9,6 +9,7 @@ type Message = { role: "user" | "assistant"; content: string };
 const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd home", label: "go to homepage", keyword: "home" },
   { cmd: "cd about", label: "about me", keyword: "about" },
+  { cmd: "cd stats", label: "github & leetcode stats", keyword: "stats" },
   { cmd: "cd projects", label: "projects applied / built", keyword: "projects" },
   { cmd: "cd learn", label: "learn logs", keyword: "learn" },
   { cmd: "cd contact", label: "contact info", keyword: "contact" },
@@ -124,7 +125,7 @@ export default function Terminal() {
     });
     if (res.ok) {
       sessionStorage.setItem("sudoUnlocked", "true");
-      sessionStorage.setItem("sudoToken", sudoPassword);  // ← add this
+      sessionStorage.setItem("sudoToken", sudoPassword);  
       setSudoUnlocked(true);
       closeSudo();
       showError("✓ sudo: session unlocked");
