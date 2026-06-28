@@ -24,11 +24,11 @@ const migrations: Migration[] = [
   {
     num: "0004",
     title: "JobLect: Automated Job Searching",
-    status: "PROD",
+    status: "ARCHIVED",
     description:
       "Automating the process of job searching for users and filters jobs that matches with user's preferences.",
-    stack: ["TypeScript", "NextJS", "Python", "LangGraph", "Supabase"],
-    links: [{ label: "website", href: "https://joblect.vercel.com/" }],
+    stack: ["TypeScript", "NextJS", "Python", "LangGraph", "Supabase", "Stripe"],
+    links: [],
   },
   {
     num: "0003",
