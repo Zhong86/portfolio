@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 const API = "https://api.github.com";
+const LAST_PROJ = 10; 
 
 type Repo = {
   name: string;
@@ -113,7 +114,7 @@ function ContribHeatmap({ weeks }: { weeks: { contributionDays: ContribDay[] }[]
 function LangBar({ langs }: { langs: Record<string, number> }) {
   const total = Object.values(langs).reduce((a, b) => a + b, 0);
   if (total === 0) return null;
-  const sorted = Object.entries(langs).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const sorted = Object.entries(langs).sort((a, b) => b[1] - a[1]).slice(0, LAST_PROJ);
 
   const COLORS = [
     "bg-accent",
@@ -128,7 +129,7 @@ function LangBar({ langs }: { langs: Record<string, number> }) {
     <div className="border border-hairline rounded-md bg-surface overflow-hidden">
       <div className="px-4 py-2.5 border-b border-hairline font-mono text-[11px] text-text-dimmer flex justify-between">
         <span className="text-text-dim">languages.json</span>
-        <span>by last 5 updated repos</span>
+        <span>by last ${LAST_PROJ} updated repos</span>
       </div>
       <div className="px-4 py-4">
         {/* Bar */}
