@@ -258,7 +258,14 @@ export default function GoalsTracker() {
 
     setNow(Date.now());
     const interval = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(interval);
+
+    const handler = () => setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    window.addEventListener("sudo-unlocked", handler);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("sudo-unlocked", handler);
+    }
   }, []);
 
   function updateCategory(id: string, next: number) {

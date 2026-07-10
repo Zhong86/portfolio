@@ -76,7 +76,6 @@ export default function Terminal() {
 
   useEffect(() => {
     const t = setTimeout(() => setAttention(false), 2200);
-    console.log(process.env.SUDO_PASSWORD);
     return () => clearTimeout(t);
   }, []);
 
@@ -128,8 +127,9 @@ export default function Terminal() {
     });
     if (res.ok) {
       sessionStorage.setItem("sudoUnlocked", "true");
-      sessionStorage.setItem("sudoToken", sudoPassword);  
+      sessionStorage.setItem("sudoToken", sudoPassword);
       setSudoUnlocked(true);
+      window.dispatchEvent(new Event("sudo-unlocked")); 
       closeSudo();
       showError("✓ sudo: session unlocked");
       return;

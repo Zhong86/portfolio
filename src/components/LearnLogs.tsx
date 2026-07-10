@@ -249,6 +249,9 @@ export default function LearnLogs() {
 
   useEffect(() => {
     setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    const handler = () => setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    window.addEventListener("sudo-unlocked", handler);
+    return () => window.removeEventListener("sudo-unlocked", handler);
   }, []);
 
   async function fetchLogs() {
@@ -313,8 +316,10 @@ export default function LearnLogs() {
   }
 
   return (
-    <div style={{ maxHeight: '500px', overflowY: 'auto', scrollbarWidth: 'none',
-      paddingLeft: '12px', paddingRight: '12px'}}>
+    <div style={{
+      maxHeight: '500px', overflowY: 'auto', scrollbarWidth: 'none',
+      paddingLeft: '12px', paddingRight: '12px'
+    }}>
       {isSudo && (
         <div className="flex items-center justify-between mb-7">
           <button

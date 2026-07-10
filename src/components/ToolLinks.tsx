@@ -215,6 +215,9 @@ export default function ToolLinks() {
 
   useEffect(() => {
     setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    const handler = () => setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    window.addEventListener("sudo-unlocked", handler);
+    return () => window.removeEventListener("sudo-unlocked", handler);
   }, []);
 
   async function fetchTools() {
