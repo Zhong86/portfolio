@@ -1,4 +1,4 @@
-async function sendTelegramMessage(text: string): Promise<string> {
+export async function sendTelegramMessage(text: string): Promise<string> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {

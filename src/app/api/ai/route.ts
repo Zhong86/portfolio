@@ -4,6 +4,7 @@ setGlobalDispatcher(new Agent({ connect: { family: 4 } }));
 import Groq from "groq-sdk";
 import fs from "fs";
 import path from "path";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const MODEL = "llama-3.3-70b-versatile";
@@ -56,31 +57,31 @@ const tools: Groq.Chat.Completions.ChatCompletionTool[] = [
       },
     },
   },
-{
-  type: "function",
-  function: {
-    name: "contact_zhong86",
-    description:
-      "Send a message directly to Billy Zhong (Zhong86) when a website visitor has given you ACTUAL CONTENT to relay — a real message, question, or inquiry they want passed along. " +
-      "Do NOT call this if the user is only asking whether you can send a message, asking how to contact Billy, or hasn't yet told you what they want to say. " +
-      "In that case, ask them what they'd like to say first, then call this tool only once they've given you the actual content.",
-    parameters: {
-      type: "object",
-      properties: {
-        message: {
-          type: "string",
-          description:
-            "The visitor's actual message content to relay. Must be real content the user provided — never a placeholder, never empty, never just 'they want to be contacted'.",
+  {
+    type: "function",
+    function: {
+      name: "contact_zhong86",
+      description:
+        "Send a message directly to Billy Zhong (Zhong86) when a website visitor has given you ACTUAL CONTENT to relay — a real message, question, or inquiry they want passed along. " +
+        "Do NOT call this if the user is only asking whether you can send a message, asking how to contact Billy, or hasn't yet told you what they want to say. " +
+        "In that case, ask them what they'd like to say first, then call this tool only once they've given you the actual content.",
+      parameters: {
+        type: "object",
+        properties: {
+          message: {
+            type: "string",
+            description:
+              "The visitor's actual message content to relay. Must be real content the user provided — never a placeholder, never empty, never just 'they want to be contacted'.",
+          },
+          fromName: {
+            type: "string",
+            description: "Name of the visitor, if they provided one. Omit if unknown.",
+          },
         },
-        fromName: {
-          type: "string",
-          description: "Name of the visitor, if they provided one. Omit if unknown.",
-        },
+        required: ["message"],
       },
-      required: ["message"],
     },
   },
-},
 ];
 
 export async function POST(req: Request) {
@@ -116,8 +117,10 @@ export async function POST(req: Request) {
           });
           continue;
         }
-        // Unrecoverable error — bail out entirely
-        return errorResponse("");
+        return new Response(
+          `Error: ${err instanceof Error ? err.message : String(err)}`,
+          { status: 500, headers: { "Content-Type": "text/plain" } }
+        );
       }
 
       const choice = completion.choices[0];
@@ -164,8 +167,11 @@ export async function POST(req: Request) {
         messages: working,
         stream: true,
       });
-    } catch {
-      return errorResponse("");
+    } catch (err) {
+      return new Response(
+        `Error: ${err instanceof Error ? err.message : String(err)}`,
+        { status: 500, headers: { "Content-Type": "text/plain" } }
+      );
     }
 
     const encoder = new TextEncoder();
@@ -197,7 +203,10 @@ export async function POST(req: Request) {
         Connection: "keep-alive",
       },
     });
-  } catch {
-    return errorResponse("");
+  } catch (err) {
+    return new Response(
+      `Error: ${err instanceof Error ? err.message : String(err)}`,
+      { status: 500, headers: { "Content-Type": "text/plain" } }
+    );
   }
 }

@@ -1,4 +1,5 @@
 // src/app/api/cron/weekly-check/route.ts
+import { sendTelegramMessage } from "@/lib/telegram";
 import { kv } from "@vercel/kv";
 
 const WEEKLY_TARGETS: Record<string, { label: string; target: number }> = {
