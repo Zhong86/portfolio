@@ -6,6 +6,20 @@ import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import Terminal from "@/components/Terminal";
 
+export const metadata: Metadata = {
+  title: "Billy Zhong — Portfolio",
+  description: "Backend engineer portfolio — web applications, APIs, AI agentic systems",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
+};
+
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
@@ -17,11 +31,6 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
-
-export const metadata: Metadata = {
-  title: "Billy Zhong — Portfolio",
-  description: "Fullstack engineer portfolio — web applications, APIs, AI agentic systems",
-};
 
 export default function RootLayout({
   children,
