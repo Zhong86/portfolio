@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 const DOCS_LINK = "https://docs.google.com/document/d/186_iEIWTCXko_vhPBV1yK0xkooNAS1mN2JTYq99qR5w/edit?usp=sharing";
 
 const TARGET_DATE = new Date("2028-01-01T00:00:00Z").getTime();
-const STORAGE_KEY = "aws-goals-progress-v1";
 
 type Category = {
   id: string;
@@ -75,18 +74,31 @@ function getWeekStart(date: Date): Date {
   return d;
 }
 
-function loadProgress(): Record<string, number> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
 function sudoToken(): string {
   return sessionStorage.getItem("sudoToken") ?? "";
+}
+
+async function fetchGoalsProgress(): Promise<Record<string, number>> {
+  const res = await fetch("/api/goals-progress");
+  if (!res.ok) return {};
+  const data = await res.json();
+  return data.values ?? {};
+}
+
+async function saveGoalsValue(id: string, value: number): Promise<boolean> {
+  try {
+    const res = await fetch("/api/goals-progress", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-sudo-token": sudoToken(),
+      },
+      body: JSON.stringify({ id, value }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 async function fetchWeeklyProgress(): Promise<{ weekKey: string; values: Record<string, number> }> {
@@ -229,12 +241,16 @@ export default function GoalsTracker() {
   const [now, setNow] = useState<number | null>(null);
   const [isSudo, setIsSudo] = useState(false);
   const [progress, setProgress] = useState<Record<string, number>>({});
+  const [progressLoading, setProgressLoading] = useState(true);
   const [weeklyProgress, setWeeklyProgress] = useState<Record<string, number>>({});
   const [weeklyLoading, setWeeklyLoading] = useState(true);
 
   useEffect(() => {
     setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
-    setProgress(loadProgress());
+
+    fetchGoalsProgress()
+      .then((values) => setProgress(values))
+      .finally(() => setProgressLoading(false));
 
     fetchWeeklyProgress()
       .then(({ values }) => setWeeklyProgress(values))
@@ -246,10 +262,12 @@ export default function GoalsTracker() {
   }, []);
 
   function updateCategory(id: string, next: number) {
-    setProgress((prev) => {
-      const updated = { ...prev, [id]: next };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
+    // Optimistic update, then persist to KV.
+    setProgress((prev) => ({ ...prev, [id]: next }));
+    saveGoalsValue(id, next).then((ok) => {
+      if (!ok) {
+        fetchGoalsProgress().then((values) => setProgress(values));
+      }
     });
   }
 
@@ -273,9 +291,12 @@ export default function GoalsTracker() {
         setProgress((prevState) => {
           const current = prevState[overallId] ?? 0;
           const nextOverall = Math.max(0, Math.min(overallCat.target, current + delta));
-          const updated = { ...prevState, [overallId]: nextOverall };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-          return updated;
+          saveGoalsValue(overallId, nextOverall).then((ok) => {
+            if (!ok) {
+              fetchGoalsProgress().then((values) => setProgress(values));
+            }
+          });
+          return { ...prevState, [overallId]: nextOverall };
         });
       }
     }
@@ -448,15 +469,19 @@ export default function GoalsTracker() {
           </span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {CATEGORIES.map((cat) => (
-            <CounterCard
-              key={cat.id}
-              category={cat}
-              value={progress[cat.id] ?? 0}
-              isSudo={isSudo}
-              onChange={updateCategory}
-            />
-          ))}
+          {progressLoading
+            ? CATEGORIES.map((cat) => (
+              <div key={cat.id} className="h-[104px] border border-hairline rounded-md bg-surface-2 animate-pulse" />
+            ))
+            : CATEGORIES.map((cat) => (
+              <CounterCard
+                key={cat.id}
+                category={cat}
+                value={progress[cat.id] ?? 0}
+                isSudo={isSudo}
+                onChange={updateCategory}
+              />
+            ))}
         </div>
       </div>
     </div>
