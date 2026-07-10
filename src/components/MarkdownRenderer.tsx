@@ -1,11 +1,5 @@
 "use client";
 
-/**
- * A lightweight markdown-to-JSX renderer.
- * Supports: # h1-h6, **bold**, *italic*, `inline code`,
- * ```code blocks```, - lists, > blockquotes, --- dividers, [links](url)
- */
-
 type Token =
   | { type: "h"; level: 1 | 2 | 3 | 4 | 5 | 6; text: string }
   | { type: "hr" }
@@ -56,8 +50,8 @@ function parseInline(text: string): React.ReactNode {
       parts.push(<strong key={key++} className="text-text font-semibold">{winner.match[2]}</strong>);
       remaining = remaining.slice(winner.match[1].length + winner.match[2].length + 4);
     } else if (winner.type === "italic") {
-      parts.push(<em key={key++} className="italic text-text-dim">{winner.match[3]}</em>);
-      remaining = remaining.slice(winner.match[1].length + winner.match[3].length + 2);
+      parts.push(<em key={key++} className="italic text-text-dim">{winner.match[2]}</em>);
+      remaining = remaining.slice(winner.match[1].length + winner.match[2].length + 2);
     } else if (winner.type === "code") {
       parts.push(
         <code key={key++} className="font-mono text-[12px] bg-surface-2 border border-hairline px-1.5 py-0.5 rounded text-accent">
