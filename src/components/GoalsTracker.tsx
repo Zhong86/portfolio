@@ -15,14 +15,14 @@ type Category = {
 
 const CATEGORIES: Category[] = [
   { id: "leetcode", label: "LeetCode Questions", unit: "solved", target: 250 },
-  { id: "dsa_patterns", label: "DSA Patterns", unit: "patterns mastered", target: 9 },
+  { id: "dsa_patterns", label: "DSA Patterns", unit: "patterns mastered", target: 84 },
   { id: "java_core", label: "Core Java Depth", unit: "topics covered", target: 6 },
   { id: "spring_boot", label: "Spring Boot 4", unit: "topics covered", target: 8 },
   { id: "postgresql", label: "PostgreSQL", unit: "topics covered", target: 6 },
   { id: "aws", label: "AWS Services", unit: "services learned", target: 8 },
   { id: "docker_cicd", label: "Docker & CI/CD", unit: "topics covered", target: 3 },
   { id: "system_design", label: "System Design", unit: "topics covered", target: 7 },
-  { id: "capstone", label: "Capstone Projects", unit: "projects shipped", target: 2 },
+  { id: "capstone", label: "Capstone Projects", unit: "projects shipped", target: 4 },
 ];
 
 const WEEKLY_GOALS: Category[] = [
