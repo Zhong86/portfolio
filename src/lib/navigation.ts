@@ -12,6 +12,7 @@ export type NavItem = {
 export const navItems: NavItem[] = [
   { href: "/", fileLabel: "index.tsx", navLabel: "home", segment: "" },
   { href: "/about", fileLabel: "about.md", navLabel: "about", segment: "about" },
+  { href: "/goals", fileLabel: "goals.log", navLabel: "goals", segment: "goals" },
   { href: "/stats", fileLabel: "stats.json", navLabel: "stats", segment: "stats" },
   { href: "/projects", fileLabel: "projects/", navLabel: "work", segment: "projects" },
   { href: "/learn", fileLabel: "learn.log", navLabel: "study", segment: "learn" },
@@ -27,6 +28,8 @@ const cdAliases: Record<string, string> = {
   "~": "/",
   "": "/",
   about: "/about",
+  goals: "/goals",
+  aws: "/goals",
   projects: "/projects",
   project: "/projects",
   work: "/projects",
