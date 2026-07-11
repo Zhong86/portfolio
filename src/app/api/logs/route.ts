@@ -1,10 +1,15 @@
 import { kv } from "@vercel/kv";
 
+type Category = "dsa" | "concepts";
+
+const CATEGORIES: Category[] = ["dsa", "concepts"];
+
 interface LogEntry {
   title: string;
   slug: string;
   date: string;
   content: string;
+  category?: Category;
 }
 
 function isSudo(req: Request): boolean {
@@ -31,6 +36,7 @@ export async function GET() {
       title: extractTitle(slug),
       date: data.date,
       content: data.content,
+      category: data.category,
     })).sort((a, b) => b.date.localeCompare(a.date));
 
     return Response.json(logs);
@@ -45,13 +51,17 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { date, title, content } = await req.json();
+  const { date, title, content, category } = await req.json();
   if (!date || !title || typeof content !== "string") {
     return new Response("Missing date or content", { status: 400 });
   }
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return new Response("Invalid date format", { status: 400 });
+  }
+
+  if (category !== undefined && category !== null && !CATEGORIES.includes(category)) {
+    return new Response("Invalid category", { status: 400 });
   }
 
   // Create a clean slug matching your original structure
@@ -61,7 +71,7 @@ export async function POST(req: Request) {
   try {
     // Save to the 'logs' hash map using the slug as the unique field
     await kv.hset("logs", {
-      [slug]: { date, content }
+      [slug]: { date, content, category: category ?? null }
     });
 
     return Response.json({ ok: true, slug });

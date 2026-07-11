@@ -3,11 +3,19 @@
 import { useEffect, useState, useRef } from "react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
+type Category = "dsa" | "concepts";
+
+const CATEGORIES: { id: Category; label: string }[] = [
+  { id: "dsa", label: "DSA" },
+  { id: "concepts", label: "Concepts" },
+];
+
 type LogEntry = {
   slug: string;
   date: string;
   title: string;
   content: string;
+  category?: Category;
 };
 
 function formatDisplayDate(slug: string) {
@@ -68,6 +76,12 @@ function LogCard({
         <div className="flex items-center gap-3 min-w-0 ">
           <span className="font-mono text-[11px] text-text-dimmer shrink-0">{log.date}</span>
 
+          {log.category && (
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded border border-hairline text-text-dimmer uppercase tracking-wide shrink-0">
+              {log.category}
+            </span>
+          )}
+
           <span className="font-mono text-[13px] text-text whitespace-nowrap overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {log.title || formatDisplayDate(log.slug)}
           </span>
@@ -122,7 +136,7 @@ function EditorModal({
   saving,
 }: {
   initial?: LogEntry;
-  onSave: (date: string, title: string, content: string) => Promise<void>;
+  onSave: (date: string, title: string, content: string, category?: Category) => Promise<void>;
   onClose: () => void;
   saving: boolean;
 }) {
@@ -130,6 +144,7 @@ function EditorModal({
   const [date] = useState(initial?.date ?? today);
   const [title, setTitle] = useState(initial?.title ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
+  const [category, setCategory] = useState<Category | "">(initial?.category ?? "");
   const [tab, setTab] = useState<"write" | "preview">("write");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -184,6 +199,25 @@ function EditorModal({
           />
         </div>
 
+        <div className="px-5 pb-3 shrink-0 flex items-center gap-3">
+          <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide shrink-0">category</span>
+          <div className="flex gap-1.5">
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setCategory((v) => (v === c.id ? "" : c.id))}
+                className={`font-mono text-[11px] px-3 py-1 rounded transition-colors ${category === c.id
+                  ? "bg-accent/15 text-accent border border-accent/30"
+                  : "text-text-dimmer hover:text-text border border-hairline"
+                  }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="px-5 pb-3 shrink-0 flex gap-1.5">
           {(["write", "preview"] as const).map((t) => (
             <button
@@ -226,7 +260,7 @@ function EditorModal({
             **bold** *italic* `code` # headings — lists
           </span>
           <button
-            onClick={() => onSave(date, title, content)}
+            onClick={() => onSave(date, title, content, category || undefined)}
             disabled={saving || !content.trim() || !date}
             className="font-mono text-[12px] px-4 py-1.5 rounded bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
@@ -246,6 +280,7 @@ export default function LearnLogs() {
   const [editingLog, setEditingLog] = useState<LogEntry | undefined>(undefined);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Category | "all">("all");
 
   useEffect(() => {
     setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
@@ -270,7 +305,9 @@ export default function LearnLogs() {
 
   useEffect(() => { fetchLogs(); }, []);
 
-  async function handleSave(date: string, title: string, content: string) {
+  const filteredLogs = filter === "all" ? logs : logs.filter((log) => log.category === filter);
+
+  async function handleSave(date: string, title: string, content: string, category?: Category) {
     setSaving(true);
     try {
       const res = await fetch("/api/logs", {
@@ -279,7 +316,7 @@ export default function LearnLogs() {
           "Content-Type": "application/json",
           "x-sudo-token": sudoToken(),
         },
-        body: JSON.stringify({ date, title, content }),
+        body: JSON.stringify({ date, title, content, category }),
       });
       if (res.status === 401) {
         setError("Sudo session expired — run sudo in the terminal again.");
@@ -338,6 +375,22 @@ export default function LearnLogs() {
         </div>
       )}
 
+      <div className="flex gap-1.5 mb-4">
+        {(["all", ...CATEGORIES.map((c) => c.id)] as const).map((id) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setFilter(id)}
+            className={`font-mono text-[11px] px-3 py-1 rounded transition-colors ${filter === id
+              ? "bg-accent/15 text-accent border border-accent/30"
+              : "text-text-dimmer hover:text-text border border-hairline"
+              }`}
+          >
+            {id === "all" ? "All" : CATEGORIES.find((c) => c.id === id)?.label}
+          </button>
+        ))}
+      </div>
+
       <div >
         {loading ? (
           <div className="flex flex-col gap-2">
@@ -347,9 +400,11 @@ export default function LearnLogs() {
           </div>
         ) : logs.length === 0 ? (
           <p className="font-mono text-[12px] text-center text-text-dimmer">no logs yet</p>
+        ) : filteredLogs.length === 0 ? (
+          <p className="font-mono text-[12px] text-center text-text-dimmer">no logs in this category</p>
         ) : (
           <div className="flex flex-col gap-2">
-            {logs.map((log) => (
+            {filteredLogs.map((log) => (
               <LogCard
                 key={log.slug}
                 log={log}
