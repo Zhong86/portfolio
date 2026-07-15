@@ -39,6 +39,7 @@ const cdAliases: Record<string, string> = {
   learn: "/learn",
   tools: "/tools",
   contact: "/contact",
+  anapsychis: "/anapsychis",
 };
 
 /**
