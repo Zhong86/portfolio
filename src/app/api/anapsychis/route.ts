@@ -5,6 +5,7 @@ interface StashEntry {
   label: string;
   note: string;
   url: string;
+  imageUrl?: string;
 }
 
 function isSudo(req: Request): boolean {
@@ -51,6 +52,7 @@ export async function GET(req: Request) {
         label: data.label,
         note: data.note,
         url: data.url,
+        imageUrl: data.imageUrl ?? "",
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -66,7 +68,7 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { label, note, url } = await req.json();
+  const { label, note, url, imageUrl } = await req.json();
 
   if (!label || typeof label !== "string" || !url || typeof url !== "string") {
     return new Response("Missing label or url", { status: 400 });
@@ -74,12 +76,15 @@ export async function POST(req: Request) {
   if (!isValidUrl(url)) {
     return new Response("Invalid url", { status: 400 });
   }
+  if (imageUrl && (typeof imageUrl !== "string" || !isValidUrl(imageUrl))) {
+    return new Response("Invalid image url", { status: 400 });
+  }
 
   const slug = `${slugifyLabel(label)}_${randomSuffix()}`;
 
   try {
     await kv.hset("anapsychis", {
-      [slug]: { label, note: note ?? "", url },
+      [slug]: { label, note: note ?? "", url, imageUrl: imageUrl ?? "" },
     });
     return Response.json({ ok: true, slug });
   } catch (error) {
@@ -93,13 +98,16 @@ export async function PUT(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { slug, label, note, url } = await req.json();
+  const { slug, label, note, url, imageUrl } = await req.json();
 
   if (!slug || !label || typeof label !== "string" || !url || typeof url !== "string") {
     return new Response("Missing slug, label, or url", { status: 400 });
   }
   if (!isValidUrl(url)) {
     return new Response("Invalid url", { status: 400 });
+  }
+  if (imageUrl && (typeof imageUrl !== "string" || !isValidUrl(imageUrl))) {
+    return new Response("Invalid image url", { status: 400 });
   }
 
   try {
@@ -109,7 +117,7 @@ export async function PUT(req: Request) {
     }
 
     await kv.hset("anapsychis", {
-      [slug]: { label, note: note ?? "", url },
+      [slug]: { label, note: note ?? "", url, imageUrl: imageUrl ?? "" },
     });
     return Response.json({ ok: true, slug });
   } catch (error) {

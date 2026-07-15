@@ -7,6 +7,7 @@ type StashEntry = {
   label: string;
   note: string;
   url: string;
+  imageUrl?: string;
 };
 
 function sudoToken(): string {
@@ -44,17 +45,33 @@ function StashCard({
         href={entry.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-start gap-3 px-4 py-3.5 pr-20"
+        className="flex flex-col"
       >
-        <div className="min-w-0 flex-1">
-          <div className="font-mono text-[13px] text-text truncate">{entry.label}</div>
-          {entry.note && (
-            <div className="font-mono text-[11px] text-text-dimmer mt-0.5 line-clamp-2">
-              {entry.note}
+        {entry.imageUrl && (
+          <div className="w-full aspect-[3/4] sm:aspect-video bg-surface-2 overflow-hidden rounded-t-md">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={entry.imageUrl}
+              alt=""
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+              }}
+            />
+          </div>
+        )}
+        <div className="flex items-start gap-3 px-4 py-3.5 pr-20">
+          <div className="min-w-0 flex-1">
+            <div className="font-mono text-[13px] text-text truncate">{entry.label}</div>
+            {entry.note && (
+              <div className="font-mono text-[12px] text-text mt-0.5 line-clamp-2">
+                {entry.note}
+              </div>
+            )}
+            <div className="font-mono text-[10.5px] text-text-dimmer/70 mt-1 truncate">
+              {entry.url}
             </div>
-          )}
-          <div className="font-mono text-[10.5px] text-text-dimmer/70 mt-1 truncate">
-            {entry.url}
           </div>
         </div>
       </a>
@@ -90,13 +107,14 @@ function StashEditorModal({
   saving,
 }: {
   initial?: StashEntry;
-  onSave: (label: string, note: string, url: string) => Promise<void>;
+  onSave: (label: string, note: string, url: string, imageUrl: string) => Promise<void>;
   onClose: () => void;
   saving: boolean;
 }) {
   const [label, setLabel] = useState(initial?.label ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   const [url, setUrl] = useState(initial?.url ?? "");
+  const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? "");
   const labelRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -116,7 +134,8 @@ function StashEditorModal({
     }
   }
 
-  const canSave = label.trim() && isValidUrl(url.trim());
+  const canSave =
+    label.trim() && isValidUrl(url.trim()) && (!imageUrl.trim() || isValidUrl(imageUrl.trim()));
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center">
@@ -161,6 +180,19 @@ function StashEditorModal({
           />
         </div>
 
+        <div className="px-5 flex flex-col gap-1.5">
+          <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide">
+            image url <span className="normal-case text-text-dimmer/70">(optional)</span>
+          </span>
+          <input
+            type="text"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="https://..."
+            className="font-mono text-[13px] text-text bg-surface border border-hairline rounded px-3 py-1.5 outline-none focus:border-accent/60 transition-colors"
+          />
+        </div>
+
         <div className="px-5 pb-5 flex flex-col gap-1.5">
           <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide">note</span>
           <textarea
@@ -174,7 +206,7 @@ function StashEditorModal({
 
         <div className="border-t border-hairline/60 px-5 py-3 flex justify-end items-center">
           <button
-            onClick={() => onSave(label.trim(), note.trim(), url.trim())}
+            onClick={() => onSave(label.trim(), note.trim(), url.trim(), imageUrl.trim())}
             disabled={saving || !canSave}
             className="font-mono text-[12px] px-4 py-1.5 rounded bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
@@ -225,7 +257,7 @@ export default function AnapsychisStash() {
     if (isSudo) fetchEntries();
   }, [isSudo]);
 
-  async function handleSave(label: string, note: string, url: string) {
+  async function handleSave(label: string, note: string, url: string, imageUrl: string) {
     setSaving(true);
     try {
       const isEdit = !!editingEntry;
@@ -236,7 +268,9 @@ export default function AnapsychisStash() {
           "x-sudo-token": sudoToken(),
         },
         body: JSON.stringify(
-          isEdit ? { slug: editingEntry!.slug, label, note, url } : { label, note, url }
+          isEdit
+            ? { slug: editingEntry!.slug, label, note, url, imageUrl }
+            : { label, note, url, imageUrl }
         ),
       });
       if (res.status === 401) {
