@@ -20,7 +20,7 @@ export default function MobileNav() {
       </div>
 
       {/* Scrollable page links row */}
-      <div className="flex justify-center overflow-x-auto scrollbar-none border-t border-hairline">
+      <div className="flex overflow-x-auto scrollbar-none border-t border-hairline px-4 gap-1">
         {linkTargets.map((item) => (
           <Link
             key={item.href}

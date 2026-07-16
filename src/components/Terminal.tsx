@@ -55,7 +55,7 @@ export default function Terminal() {
   const [sudoPassword, setSudoPassword] = useState("");
   const [sudoAttempts, setSudoAttempts] = useState(() => {
     if (typeof window === "undefined") return 0;
-    return Number(sessionStorage.getItem("sudoAttempts") ?? 0);
+    return Number(localStorage.getItem("sudoAttempts") ?? 0);
   });
   const [sudoError, setSudoError] = useState<string | null>(null);
   const [sudoUnlocked, setSudoUnlocked] = useState(false);
@@ -69,7 +69,7 @@ export default function Terminal() {
 
   // restore sudo session on mount
   useEffect(() => {
-    if (sessionStorage.getItem("sudoUnlocked") === "true") {
+    if (localStorage.getItem("sudoUnlocked") === "true") {
       setSudoUnlocked(true);
     }
   }, []);
@@ -101,7 +101,7 @@ export default function Terminal() {
   function openSudo() {
     setSudoPassword("");
     setSudoError(null);
-    sessionStorage.removeItem("sudoAttempts");
+    localStorage.removeItem("sudoAttempts");
     setSudoAttempts(0);
     setSudoExiting(false);
     setSudoMode(true);
@@ -126,8 +126,8 @@ export default function Terminal() {
       body: JSON.stringify({ password: sudoPassword }),
     });
     if (res.ok) {
-      sessionStorage.setItem("sudoUnlocked", "true");
-      sessionStorage.setItem("sudoToken", sudoPassword);
+      localStorage.setItem("sudoUnlocked", "true");
+      localStorage.setItem("sudoToken", sudoPassword);
       setSudoUnlocked(true);
       window.dispatchEvent(new Event("sudo-unlocked")); 
       closeSudo();
@@ -137,7 +137,7 @@ export default function Terminal() {
 
     const used = sudoAttempts + 1;
     setSudoAttempts(used);
-    sessionStorage.setItem("sudoAttempts", String(used));
+    localStorage.setItem("sudoAttempts", String(used));
     setSudoPassword("");
 
     if (used >= MAX_ATTEMPTS) {

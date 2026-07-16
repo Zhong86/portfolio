@@ -30,7 +30,7 @@ function formatDisplayDate(slug: string) {
 }
 
 function sudoToken(): string {
-  return sessionStorage.getItem("sudoToken") ?? "";
+  return localStorage.getItem("sudoToken") ?? "";
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -283,8 +283,8 @@ export default function LearnLogs() {
   const [filter, setFilter] = useState<Category | "all">("all");
 
   useEffect(() => {
-    setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
-    const handler = () => setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
+    const handler = () => setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
     window.addEventListener("sudo-unlocked", handler);
     return () => window.removeEventListener("sudo-unlocked", handler);
   }, []);

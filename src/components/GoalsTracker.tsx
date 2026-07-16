@@ -75,7 +75,7 @@ function getWeekStart(date: Date): Date {
 }
 
 function sudoToken(): string {
-  return sessionStorage.getItem("sudoToken") ?? "";
+  return localStorage.getItem("sudoToken") ?? "";
 }
 
 async function fetchGoalsProgress(): Promise<Record<string, number>> {
@@ -246,7 +246,7 @@ export default function GoalsTracker() {
   const [weeklyLoading, setWeeklyLoading] = useState(true);
 
   useEffect(() => {
-    setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
 
     fetchGoalsProgress()
       .then((values) => setProgress(values))
@@ -259,7 +259,7 @@ export default function GoalsTracker() {
     setNow(Date.now());
     const interval = setInterval(() => setNow(Date.now()), 1000);
 
-    const handler = () => setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    const handler = () => setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
     window.addEventListener("sudo-unlocked", handler);
 
     return () => {

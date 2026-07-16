@@ -11,7 +11,7 @@ type StashEntry = {
 };
 
 function sudoToken(): string {
-  return sessionStorage.getItem("sudoToken") ?? "";
+  return localStorage.getItem("sudoToken") ?? "";
 }
 
 function LockedScreen() {
@@ -228,7 +228,7 @@ export default function AnapsychisStash() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const check = () => setIsSudo(sessionStorage.getItem("sudoUnlocked") === "true");
+    const check = () => setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
     check();
     window.addEventListener("sudo-unlocked", check);
     return () => window.removeEventListener("sudo-unlocked", check);
@@ -307,7 +307,7 @@ export default function AnapsychisStash() {
     }
   }
 
-  // Avoid a locked-screen flash before sessionStorage has been checked on mount.
+  // Avoid a locked-screen flash before localStorage has been checked on mount.
   if (isSudo === null) return null;
 
   if (!isSudo) return <LockedScreen />;
