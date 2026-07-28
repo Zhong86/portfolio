@@ -22,12 +22,12 @@ type SchemaField = {
 };
 
 export const ABOUT_INFO: SchemaField[] = [
-  { field: "roles", type: "string[]", value: "FullStack Developer, AI Agent Engineer" },
+  { field: "roles", type: "string[]", value: "Backend Developer, AI Agent Engineer" },
   { field: "focus", type: "string[]", value: "AI Automated Systems, FullStack Applications" },
   { field: "tech_stack", type: "string[]", value: "Python, PHP, TypeScript, LangChain, React, Laravel" },
-  { field: "occupation", type: "string", value: "FullStack Intern @ DBKlik" },
-  { field: "months_active", type: "int", value: "3" },
-  { field: "looking_for", type: "string[]", value: "Remote paid internships" },
+  { field: "occupation", type: "string", value: "AI Agent & Fullstack Intern @ DBKlik" },
+  { field: "start", type: "datetime", value: "04/2026" },
+  { field: "end", type: "datetime", value: "-"},
 ];
 
 // -------------------- Experiences ---------------
