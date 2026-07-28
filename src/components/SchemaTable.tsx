@@ -1,17 +1,4 @@
-type SchemaField = {
-  field: string;
-  type: string;
-  value: string;
-};
-
-const fields: SchemaField[] = [
-  { field: "roles", type: "string[]", value: "FullStack Developer, AI Agent Engineer" },
-  { field: "focus", type: "string[]", value: "AI Automated Systems, FullStack Applications" },
-  { field: "tech_stack", type: "string[]", value: "Python, PHP, TypeScript, LangChain, React, Laravel" },
-  { field: "occupation", type: "string", value: "FullStack Intern @ DBKlik" },
-  { field: "months_active", type: "int", value: "3" },
-  { field: "looking_for", type: "string[]", value: "Remote paid internships" },
-];
+import { ABOUT_INFO } from "@/lib/config";
 
 export default function SchemaTable() {
   return (
@@ -21,11 +8,11 @@ export default function SchemaTable() {
         <div className="hidden sm:block px-4 py-3 border-b border-hairline sm:border-r">type</div>
         <div className="hidden sm:block px-4 py-3 border-b border-hairline">value</div>
       </div>
-      {fields.map((row, i) => (
+      {ABOUT_INFO.map((row, i) => (
         <div
           key={row.field}
           className={`grid grid-cols-1 sm:grid-cols-[140px_110px_1fr] font-mono text-[13px] ${
-            i !== fields.length - 1 ? "border-b border-hairline" : ""
+            i !== ABOUT_INFO.length - 1 ? "border-b border-hairline" : ""
           }`}
         >
           <div className="px-4 py-3 border-b sm:border-b-0 sm:border-r border-hairline text-blue">

@@ -1,63 +1,7 @@
 "use client";
 
+import { Migration, PROJECTS } from "@/lib/config";
 import { useState } from "react";
-
-type Migration = {
-  num: string;
-  title: string;
-  status: "PROD" | "ARCHIVED";
-  description: string;
-  stack: string[];
-  links: { label: string; href: string }[];
-};
-
-const migrations: Migration[] = [
-  {
-    num: "0005",
-    title: "Orchestrator Agent",
-    status: "PROD",
-    description:
-      "Collaborated in creating an AI agent for DBKlik that allows it to access internal database with Read permissions along with dealing with Excel, and PDF files. The AI relies on different Skill.md that will be loaded based on agent's needs. SQL Queries and scripts to read Excel file are created by the AI agent to allow reusability. The system heavily reduces token usage and increases efficiency.",
-    stack: ["Python", "LangGraph"],
-    links: [{ label: "RAG", href: "https://aws.amazon.com/id/what-is/retrieval-augmented-generation/" }],
-  },
-  {
-    num: "0004",
-    title: "JobLect: Automated Job Searching",
-    status: "ARCHIVED",
-    description:
-      "Automating the process of job searching for users and filters jobs that matches with user's preferences.",
-    stack: ["TypeScript", "NextJS", "Python", "LangGraph", "Supabase", "Stripe"],
-    links: [],
-  },
-  {
-    num: "0003",
-    title: "Automated Purchase Order Agent",
-    status: "ARCHIVED",
-    description:
-      "Collaborated in a project that automates the process of Purchase Orders for DBKlik",
-    stack: ["Python", "LangGraph"],
-    links: [{ label: "source_docs", href: "https://www.langchain.com/langgraph" }],
-  },
-  {
-    num: "0002",
-    title: "GoogleMeet AI",
-    status: "ARCHIVED",
-    description:
-      "AI bot that summarizes Google Meet for DBKlik. Recoding is transcribed with FastWhisper and summarized to be sent to the Whatsapp group",
-    stack: ["Openclaw", "TypeScript"],
-    links: [{ label: "source_docs", href: "https://openclaw.ai/" }],
-  },
-  {
-    num: "0001",
-    title: "DBJobs: Job Portal Website",
-    status: "PROD",
-    description:
-      "Job portal website made during DBKlik internship. Handled the fullstack development while collaborating with System Analyst and UI/UX designer.",
-    stack: ["Laravel", "PHP"],
-    links: [{ label: "website", href: "https://job.dbklik.co.id/" }],
-  },
-];
 
 function MigrationItem({ migration }: { migration: Migration }) {
   const [open, setOpen] = useState(false);
@@ -133,7 +77,7 @@ function MigrationItem({ migration }: { migration: Migration }) {
 export default function MigrationList() {
   return (
     <div>
-      {migrations.map((m) => (
+      {PROJECTS.map((m) => (
         <MigrationItem key={m.num} migration={m} />
       ))}
     </div>

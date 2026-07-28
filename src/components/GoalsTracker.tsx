@@ -1,58 +1,8 @@
 "use client";
 
+import { Category, WEEKLY_TO_OVERALL_MAP, CATEGORIES, TARGET_DATE, WEEKLY_GOALS, DOCS_LINK, TOP_GOALS } from "@/lib/config";
 import { useEffect, useMemo, useState } from "react";
 
-const DOCS_LINK = "https://docs.google.com/document/d/186_iEIWTCXko_vhPBV1yK0xkooNAS1mN2JTYq99qR5w/edit?usp=sharing";
-
-const TARGET_DATE = new Date("2028-01-01T00:00:00Z").getTime();
-
-type Category = {
-  id: string;
-  label: string;
-  unit: string;
-  target: number;
-};
-
-const CATEGORIES: Category[] = [
-  { id: "leetcode", label: "LeetCode Questions", unit: "solved", target: 250 },
-  { id: "dsa_patterns", label: "DSA Patterns", unit: "patterns mastered", target: 84 },
-  { id: "java_core", label: "Core Java Depth", unit: "topics covered", target: 6 },
-  { id: "spring_boot", label: "Spring Boot 4", unit: "topics covered", target: 8 },
-  { id: "postgresql", label: "PostgreSQL", unit: "topics covered", target: 6 },
-  { id: "aws", label: "AWS Services", unit: "services learned", target: 8 },
-  { id: "docker_cicd", label: "Docker & CI/CD", unit: "topics covered", target: 3 },
-  { id: "system_design", label: "System Design", unit: "topics covered", target: 7 },
-  { id: "capstone", label: "Capstone Projects", unit: "projects shipped", target: 4 },
-];
-
-const WEEKLY_GOALS: Category[] = [
-  { id: "weekly_leetcode", label: "LeetCode Questions", unit: "this week", target: 12 },
-  { id: "weekly_dsa", label: "DSA Concepts", unit: "this week", target: 5 },
-  { id: "weekly_project_phases", label: "Project Phases", unit: "this week", target: 5 },
-];
-
-const TOP_GOALS = [
-  {
-    num: "01",
-    title: "DSA Grind",
-    desc: "250 LeetCode questions + DSA patterns.",
-  },
-  {
-    num: "02",
-    title: "Stack System",
-    desc: "Java 21 internals, Spring Boot 4, PostgreSQL tuning, and AWS.",
-  },
-  {
-    num: "03",
-    title: "Ship Projects",
-    desc: "AWS + Docker + CI/CD pipeline.",
-  },
-];
-
-const WEEKLY_TO_OVERALL_MAP: Record<string, string> = {
-  weekly_leetcode: "leetcode",
-  weekly_dsa: "dsa_patterns",
-};
 
 function formatCountdown(ms: number) {
   const clamped = Math.max(ms, 0);

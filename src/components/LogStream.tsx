@@ -1,28 +1,7 @@
 "use client";
 
+import { EXPERIENCES, LogLevel } from "@/lib/config";
 import { useState } from "react";
-
-type LogLevel = "info" | "ok" | "warn";
-
-type LogEntry = {
-  ts: string;
-  level: LogLevel;
-  service: string;
-  msg: string;
-};
-
-const logs: LogEntry[] = [
-  { ts: "05-2026", level: "ok", service: "build", msg: "AI Agents for DBKlik" },
-  { ts: "04-2026", level: "ok", service: "career", msg: "Fullstack internship at DBKlik" },
-  { ts: "03-2026", level: "ok", service: "build", msg: "Book manager with Laravel" },
-  { ts: "02-2026", level: "info", service: "study", msg: "Java Springboot" },
-  { ts: "01-2026", level: "ok", service: "build", msg: "First portfolio website" },
-  { ts: "12-2025", level: "info", service: "study", msg: "API, authentication, database, cache" },
-  { ts: "10-2025", level: "info", service: "study", msg: "React stack" },
-  { ts: "08-2025", level: "info", service: "study", msg: "HTML, CSS, JS stack" },
-  { ts: "07-2025", level: "warn", service: "linux", msg: "Download wifi drivers & learned terminal" },
-  { ts: "07-2025", level: "info", service: "linux", msg: "Learn and configured Arch linux" },
-];
 
 const levelColor: Record<LogLevel, string> = {
   info: "text-blue",
@@ -33,8 +12,8 @@ const PAGE_SIZE = 12;
 
 export default function LogStream() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const visibleLogs = logs.slice(0, visibleCount);
-  const hasMore = visibleCount < logs.length;
+  const visibleLogs = EXPERIENCES.slice(0, visibleCount);
+  const hasMore = visibleCount < EXPERIENCES.length;
 
  return (
     <div className="bg-surface border border-hairline rounded-md overflow-hidden">
@@ -66,7 +45,7 @@ export default function LogStream() {
             onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
             className="font-mono text-[11px] text-text-dimmer hover:text-accent transition-colors uppercase tracking-wide"
           >
-            load more ({logs.length - visibleCount} remaining)
+            load more ({EXPERIENCES.length - visibleCount} remaining)
           </button>
         </div>
       )}

@@ -2,24 +2,9 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { resolveCdTarget } from "@/lib/navigation";
+import { AI_MAX_MESSAGES, NAV_ITEMS, PaletteItem, SUDO_MAX_ATTEMPTS } from "@/lib/config";
 
-const MAX_MESSAGES = 5;
-
-type PaletteItem = { cmd: string; label: string; keyword: string };
 type Message = { role: "user" | "assistant"; content: string };
-
-const NAV_ITEMS: PaletteItem[] = [
-  { cmd: "cd home", label: "go to homepage", keyword: "home" },
-  { cmd: "cd about", label: "about me", keyword: "about" },
-  { cmd: "cd goals", label: "AWS internship goal tracker", keyword: "goals" },
-  { cmd: "cd stats", label: "github & leetcode stats", keyword: "stats" },
-  { cmd: "cd projects", label: "projects applied / built", keyword: "projects" },
-  { cmd: "cd learn", label: "learn logs", keyword: "learn" },
-  { cmd: "cd contact", label: "contact info", keyword: "contact" },
-  { cmd: "talos_ai", label: "ask AI", keyword: "ai" },
-];
-
-const MAX_ATTEMPTS = 3;
 
 function fuzzyMatch(query: string, target: string): boolean {
   const q = query.toLowerCase().trim();
@@ -140,11 +125,11 @@ export default function Terminal() {
     localStorage.setItem("sudoAttempts", String(used));
     setSudoPassword("");
 
-    if (used >= MAX_ATTEMPTS) {
+    if (used >= SUDO_MAX_ATTEMPTS) {
       setSudoError("sudo: 3 incorrect password attempts");
       setTimeout(() => closeSudo(), 1400);
     } else {
-      setSudoError(`Sorry, try again. ${MAX_ATTEMPTS - used} attempt${MAX_ATTEMPTS - used === 1 ? "" : "s"} remaining.`);
+      setSudoError(`Sorry, try again. ${SUDO_MAX_ATTEMPTS - used} attempt${SUDO_MAX_ATTEMPTS - used === 1 ? "" : "s"} remaining.`);
     }
   }
 
@@ -157,7 +142,7 @@ export default function Terminal() {
   async function handleAsk(prompt: string) {
     if (!prompt.trim() || streaming) return;
     const userMsg: Message = { role: "user", content: prompt };
-    const history = [...messages, userMsg].slice(-MAX_MESSAGES);
+    const history = [...messages, userMsg].slice(-AI_MAX_MESSAGES);
     setMessages(history);
     setValue("");
     setStreaming(true);
@@ -305,7 +290,7 @@ export default function Terminal() {
   }
 
   // ── Sudo overlay ──────────────────────────────────────────────────────────
-  const remainingAttempts = MAX_ATTEMPTS - sudoAttempts;
+  const remainingAttempts = SUDO_MAX_ATTEMPTS - sudoAttempts;
 
   const SudoOverlay = sudoMode ? (
     <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
@@ -344,7 +329,7 @@ export default function Terminal() {
               Attempts remaining
             </span>
             <div className="flex gap-1.5">
-              {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => (
+              {Array.from({ length: SUDO_MAX_ATTEMPTS }).map((_, i) => (
                 <span
                   key={i}
                   className={`w-2 h-2 rounded-full transition-colors duration-300 ${i < remainingAttempts ? "bg-green" : "bg-surface-3"}`}
