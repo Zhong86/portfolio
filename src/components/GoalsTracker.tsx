@@ -381,7 +381,7 @@ export default function GoalsTracker() {
               this week's sprint
             </div>
             <div className="font-mono text-[13px] text-text-dim">
-              12 LeetCode · 5 DSA concepts · 5 project phases
+              12 LeetCode · 5 DSA concepts
             </div>
           </div>
 

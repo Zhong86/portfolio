@@ -138,7 +138,6 @@ export const CATEGORIES: Category[] = [
 export const WEEKLY_GOALS: Category[] = [
   { id: "weekly_leetcode", label: "LeetCode Questions", unit: "this week", target: 7 },
   { id: "weekly_dsa", label: "DSA Concepts", unit: "this week", target: 5 },
-  { id: "weekly_project_phases", label: "Project Phases", unit: "this week", target: 5 },
 ];
 
 export const TOP_GOALS = [

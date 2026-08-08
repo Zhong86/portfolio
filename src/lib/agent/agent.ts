@@ -88,9 +88,14 @@ export class TalosAgent {
 
     const resolved = await this.resolveTools(seeded);
 
+    // Tools are passed so the model still recognises them as already-available
+    // (the system prompt references them), but tool_choice "none" forces it to
+    // answer in prose instead of emitting tool-call syntax we can no longer run.
     const completionStream = await this.groq.chat.completions.create({
       model: this.model,
       messages: resolved,
+      tools: agentTools,
+      tool_choice: "none",
       stream: true,
     });
 
