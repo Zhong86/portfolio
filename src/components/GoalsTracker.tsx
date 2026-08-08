@@ -345,7 +345,7 @@ export default function GoalsTracker() {
         </a>
       </div>
 
-      {/* Top 3 priorities */}
+      {/* Top priorities */}
       <div>
         <div className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide mb-3">
           top priorities

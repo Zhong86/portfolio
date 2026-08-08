@@ -148,11 +148,6 @@ export const TOP_GOALS = [
   },
   {
     num: "02",
-    title: "Stack System",
-    desc: "Java 21 internals, Spring Boot 4, PostgreSQL tuning, and AWS.",
-  },
-  {
-    num: "03",
     title: "Ship Projects",
     desc: "AWS + Docker + CI/CD pipeline.",
   },
