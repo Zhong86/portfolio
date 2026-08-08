@@ -350,7 +350,7 @@ export default function GoalsTracker() {
         <div className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide mb-3">
           top priorities
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {TOP_GOALS.map((goal) => (
             <div
               key={goal.num}
