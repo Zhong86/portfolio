@@ -381,7 +381,7 @@ export default function GoalsTracker() {
               this week's sprint
             </div>
             <div className="font-mono text-[13px] text-text-dim">
-              12 LeetCode · 5 DSA concepts
+              {WEEKLY_GOALS.map((goal) => `${goal.target} ${goal.label}`).join(" · ")}
             </div>
           </div>
 
@@ -401,10 +401,10 @@ export default function GoalsTracker() {
           </div>
         </div>
 
-        <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {weeklyLoading
-            ? [1, 2, 3].map((i) => (
-              <div key={i} className="h-[104px] border border-hairline rounded-md bg-surface-2 animate-pulse" />
+            ? WEEKLY_GOALS.map((goal) => (
+              <div key={goal.id} className="h-[104px] border border-hairline rounded-md bg-surface-2 animate-pulse" />
             ))
             : WEEKLY_GOALS.map((goal) => (
               <CounterCard
