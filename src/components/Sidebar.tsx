@@ -38,6 +38,15 @@ export default function Sidebar() {
         available for work
       </div>
 
+      <a
+        href="/resume.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 font-mono text-[12px] text-accent border border-accent rounded-md py-2 mb-6 transition-colors hover:bg-accent-dim"
+      >
+        resume.pdf
+      </a>
+
       <nav className="font-mono text-[13px]">
         {navItems.map((item, i) => {
           const isActive = pathname === item.href;
