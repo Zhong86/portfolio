@@ -77,17 +77,21 @@ function CounterCard({
   category,
   value,
   isSudo,
+  allowOverflow = false,
   onChange,
 }: {
   category: Category;
   value: number;
   isSudo: boolean;
+  /** Let the stored count run past the target — the surplus rolls into next week. */
+  allowOverflow?: boolean;
   onChange: (id: string, next: number) => void;
 }) {
   const pct = Math.min(100, Math.round((value / category.target) * 100));
 
   function clampSet(next: number) {
-    const clamped = Math.max(0, Math.min(category.target, Number.isFinite(next) ? next : 0));
+    const safe = Number.isFinite(next) ? next : 0;
+    const clamped = Math.max(0, allowOverflow ? safe : Math.min(category.target, safe));
     onChange(category.id, clamped);
   }
 
@@ -412,6 +416,7 @@ export default function GoalsTracker() {
                 category={goal}
                 value={weeklyProgress[goal.id] ?? 0}
                 isSudo={isSudo}
+                allowOverflow
                 onChange={updateWeeklyCategory}
               />
             ))}
