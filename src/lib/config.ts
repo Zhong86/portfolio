@@ -14,20 +14,39 @@ export const NAV_ITEMS: PaletteItem[] = [
   { cmd: "talos_ai", label: "ask AI", keyword: "ai" },
 ];
 
+// -------------------- HOME -------------------
+export type HomeContent = {
+  tagline: string;
+  headlinePrefix: string;
+  accentWord: string;
+  startDate: string;
+  description: string;
+};
+
+export const DEFAULT_HOME: HomeContent = {
+  tagline: "fullstack engineer · ai agent engineer",
+  headlinePrefix: "A guy who just loves to",
+  accentWord: "code",
+  startDate: "2025-06-01T00:00:00Z",
+  description:
+    "Full-stack developer focusing in backend engineering: API design, routing, and database architecture, with frontend experience as needed. Self-directed learner throughout my career.",
+};
+
 // -------------------- ABOUT ------------------
-type SchemaField = {
+export type AboutField = {
+  id: string;
   field: string;
   type: string;
   value: string;
 };
 
-export const ABOUT_INFO: SchemaField[] = [
-  { field: "roles", type: "string[]", value: "Backend Developer, AI Agent Engineer" },
-  { field: "focus", type: "string[]", value: "AI Automated Systems, FullStack Applications" },
-  { field: "tech_stack", type: "string[]", value: "Python, PHP, TypeScript, LangChain, React, Laravel" },
-  { field: "occupation", type: "string", value: "AI Agent & Fullstack Intern @ DBKlik" },
-  { field: "start", type: "datetime", value: "04/2026" },
-  { field: "end", type: "datetime", value: "-"},
+export const DEFAULT_ABOUT_INFO: AboutField[] = [
+  { id: "roles", field: "roles", type: "string[]", value: "Backend Developer, AI Agent Engineer" },
+  { id: "focus", field: "focus", type: "string[]", value: "AI Automated Systems, FullStack Applications" },
+  { id: "tech_stack", field: "tech_stack", type: "string[]", value: "Python, PHP, TypeScript, LangChain, React, Laravel" },
+  { id: "occupation", field: "occupation", type: "string", value: "AI Agent & Fullstack Intern @ DBKlik" },
+  { id: "start", field: "start", type: "datetime", value: "04/2026" },
+  { id: "end", field: "end", type: "datetime", value: "-" },
 ];
 
 // -------------------- Experiences ---------------
@@ -55,6 +74,7 @@ export const EXPERIENCES: LogEntry[] = [
 
 // -------------------- Projects ---------------
 export type Migration = {
+  id: string;
   num: string;
   title: string;
   status: "PROD" | "ARCHIVED";
@@ -63,8 +83,9 @@ export type Migration = {
   links: { label: string; href: string }[];
 };
 
-export const PROJECTS: Migration[] = [
+export const DEFAULT_PROJECTS: Migration[] = [
   {
+    id: "orchestrator-agent",
     num: "0005",
     title: "Orchestrator Agent",
     status: "PROD",
@@ -74,6 +95,7 @@ export const PROJECTS: Migration[] = [
     links: [{ label: "RAG", href: "https://aws.amazon.com/id/what-is/retrieval-augmented-generation/" }],
   },
   {
+    id: "joblect",
     num: "0004",
     title: "JobLect: Automated Job Searching",
     status: "ARCHIVED",
@@ -83,6 +105,7 @@ export const PROJECTS: Migration[] = [
     links: [],
   },
   {
+    id: "purchase-order-agent",
     num: "0003",
     title: "Automated Purchase Order Agent",
     status: "ARCHIVED",
@@ -92,6 +115,7 @@ export const PROJECTS: Migration[] = [
     links: [{ label: "source_docs", href: "https://www.langchain.com/langgraph" }],
   },
   {
+    id: "googlemeet-ai",
     num: "0002",
     title: "GoogleMeet AI",
     status: "ARCHIVED",
@@ -101,6 +125,7 @@ export const PROJECTS: Migration[] = [
     links: [{ label: "source_docs", href: "https://openclaw.ai/" }],
   },
   {
+    id: "dbjobs",
     num: "0001",
     title: "DBJobs: Job Portal Website",
     status: "PROD",

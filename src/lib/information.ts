@@ -1,10 +1,13 @@
 // src/lib/information.ts
 import fs from "fs";
 import path from "path";
+import { kv } from "@vercel/kv";
 import {
-  ABOUT_INFO,
+  AboutField,
+  DEFAULT_ABOUT_INFO,
   EXPERIENCES,
-  PROJECTS,
+  Migration,
+  DEFAULT_PROJECTS,
   CATEGORIES,
   WEEKLY_GOALS,
   TOP_GOALS,
@@ -40,18 +43,22 @@ function loadMarkdownTopic(topic: string): string {
   return fs.readFileSync(filePath, "utf-8");
 }
 
-function loadAboutTopic(): string {
-  const schema = ABOUT_INFO.map((r) => `- ${r.field}: ${r.value}`).join("\n");
+async function loadAboutTopic(): Promise<string> {
+  const stored = await kv.get<AboutField[]>("about").catch(() => null);
+  const fields = stored && stored.length > 0 ? stored : DEFAULT_ABOUT_INFO;
+  const schema = fields.map((r) => `- ${r.field}: ${r.value}`).join("\n");
   const timeline = EXPERIENCES.slice(0, 10)
     .map((e) => `- ${e.ts} [${e.service}] ${e.msg}`)
     .join("\n");
   return `# ABOUT\n\n## Profile\n${schema}\n\n## Recent Timeline\n${timeline}`;
 }
 
-function loadProjectsTopic(): string {
-  return PROJECTS.map(
-    (p) => `## ${p.title} (${p.status})\nStack: ${p.stack.join(", ")}\n${p.description}`
-  ).join("\n\n");
+async function loadProjectsTopic(): Promise<string> {
+  const stored = await kv.get<Migration[]>("projects").catch(() => null);
+  const projects = stored && stored.length > 0 ? stored : DEFAULT_PROJECTS;
+  return projects
+    .map((p) => `## ${p.title} (${p.status})\nStack: ${p.stack.join(", ")}\n${p.description}`)
+    .join("\n\n");
 }
 
 function loadGoalsTopic(): string {
@@ -62,7 +69,7 @@ function loadGoalsTopic(): string {
 }
 
 /** Resolves a topic name to plain-text content, regardless of which backend it lives in. */
-export function loadInformation(topic: string): string {
+export async function loadInformation(topic: string): Promise<string> {
   if (!(topic in INFO_TOPICS)) {
     return `Unknown topic "${topic}". Available topics: ${Object.keys(INFO_TOPICS).join(", ")}.`;
   }
