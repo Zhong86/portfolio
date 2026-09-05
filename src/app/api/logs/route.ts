@@ -1,45 +1,21 @@
-import { kv } from "@vercel/kv";
-
-type Category = "dsa" | "concepts";
-
-const CATEGORIES: Category[] = ["dsa", "concepts"];
-
-interface LogEntry {
-  title: string;
-  slug: string;
-  date: string;
-  content: string;
-  category?: Category;
-}
+import {
+  deleteLog,
+  isValidCategory,
+  isValidDate,
+  listLogs,
+  saveLog,
+  updateLog,
+  type LogCategory,
+} from "@/lib/logs";
 
 function isSudo(req: Request): boolean {
   return req.headers.get("x-sudo-token") === process.env.SUDO_PASSWORD;
 }
 
-// Helper to format title from the slug
-function extractTitle(slug: string): string {
-  return slug.split("_").slice(0, -1).join("_").replace(/-/g, " ");
-}
-
 // GET /api/logs — return all logs sorted newest first
 export async function GET() {
   try {
-    // Fetch all logs stored under the 'logs' hash map
-    const logsMap = await kv.hgetall<Record<string, Omit<LogEntry, "slug" | "title">>>("logs");
-    
-    if (!logsMap) {
-      return Response.json([]);
-    }
-
-    const logs: LogEntry[] = Object.entries(logsMap).map(([slug, data]) => ({
-      slug,
-      title: extractTitle(slug),
-      date: data.date,
-      content: data.content,
-      category: data.category,
-    })).sort((a, b) => b.date.localeCompare(a.date));
-
-    return Response.json(logs);
+    return Response.json(await listLogs());
   } catch (error) {
     return Response.json({ error: "Failed to fetch logs" }, { status: 500 });
   }
@@ -55,28 +31,63 @@ export async function POST(req: Request) {
   if (!date || !title || typeof content !== "string") {
     return new Response("Missing date or content", { status: 400 });
   }
-
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+  if (!isValidDate(date)) {
     return new Response("Invalid date format", { status: 400 });
   }
-
-  if (category !== undefined && category !== null && !CATEGORIES.includes(category)) {
+  if (!isValidCategory(category)) {
     return new Response("Invalid category", { status: 400 });
   }
 
-  // Create a clean slug matching your original structure
-  const cleanTitle = title.replace(/\s+/g, "-");
-  const slug = `${cleanTitle}_${date}`;
-
   try {
-    // Save to the 'logs' hash map using the slug as the unique field
-    await kv.hset("logs", {
-      [slug]: { date, content, category: category ?? null }
-    });
-
+    const slug = await saveLog(title, date, content, category ?? null);
     return Response.json({ ok: true, slug });
   } catch (error) {
     return Response.json({ error: "Failed to save log" }, { status: 500 });
+  }
+}
+
+// PUT /api/logs — update an existing entry by slug.
+// Changing title or date re-slugs the entry; the old key is removed.
+export async function PUT(req: Request) {
+  if (!isSudo(req)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const { slug, title, date, content, category } = await req.json();
+
+  if (!slug || typeof slug !== "string") {
+    return new Response("Missing slug", { status: 400 });
+  }
+  if (title !== undefined && (typeof title !== "string" || !title.trim())) {
+    return new Response("Invalid title", { status: 400 });
+  }
+  if (date !== undefined && !isValidDate(date)) {
+    return new Response("Invalid date format", { status: 400 });
+  }
+  if (content !== undefined && typeof content !== "string") {
+    return new Response("Invalid content", { status: 400 });
+  }
+  if (!isValidCategory(category)) {
+    return new Response("Invalid category", { status: 400 });
+  }
+
+  try {
+    const result = await updateLog(slug, {
+      title,
+      date,
+      content,
+      category: category as LogCategory | null | undefined,
+    });
+
+    if (!result.ok) {
+      return result.reason === "not_found"
+        ? new Response("Log not found", { status: 404 })
+        : new Response("An entry with that title and date already exists", { status: 409 });
+    }
+
+    return Response.json({ ok: true, slug: result.slug });
+  } catch (error) {
+    return Response.json({ error: "Failed to update log" }, { status: 500 });
   }
 }
 
@@ -90,8 +101,7 @@ export async function DELETE(req: Request) {
   if (!slug) return new Response("Missing slug", { status: 400 });
 
   try {
-    // Remove the specific slug field from our 'logs' hash map
-    await kv.hdel("logs", slug);
+    await deleteLog(slug);
     return Response.json({ ok: true });
   } catch (error) {
     return Response.json({ error: "Failed to delete log" }, { status: 500 });
