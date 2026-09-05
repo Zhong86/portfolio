@@ -49,6 +49,92 @@ export const DEFAULT_ABOUT_INFO: AboutField[] = [
   { id: "end", field: "end", type: "datetime", value: "-" },
 ];
 
+// -------------------- Information (markdown topics) ------------
+// Long-form knowledge base for the Talos agent. Stored in KV under `info:<topic>`;
+// the constants below are the seed values used whenever KV has no entry yet.
+export const MARKDOWN_TOPICS = ["coding", "profession", "hobbies", "contact"] as const;
+export type MarkdownTopic = (typeof MARKDOWN_TOPICS)[number];
+
+export const DEFAULT_MARKDOWN_INFO: Record<MarkdownTopic, string> = {
+  coding: `# CODING
+
+## Tech Stacks
+Main languages are Python and TypeScript.
+- Started with Python for MiddleSchool but then deal with C# for game development.
+- Use JS (React) as my main language for Web Development along with PHP (Laravel).
+- Briefly learned Java (Springboot) for backend.
+- Used Python for LangChain, LangGraph AI projects.
+- Learned AWS - EC2, RDS, S3, and the basics of CI/CD
+
+## Projects
+### File Reading Agent
+**Stack:** Python, LangGraph
+Created a tool for an internal AI Agent at DBKlik that allows it to read CSV, XLSX, and PDF files. Uses RAG chunk system for PDF along with Pandas generated scripts by a LLM that is passed to the agent. Heavily reduces token usage and increases efficiency.
+### Automated Job Searching
+**Stack:** TypeScript, NextJS, Python, LangGraph, Supabase
+Automating the process of job searching for users and filters jobs that matches with user's preferences.
+### Automated Purchase Order Agent
+**Stack:** Python, LangGraph
+Collaborated in a project that automates the process of Purchase Orders for DBKlik.
+### GoogleMeet AI
+**Stack:** Openclaw, TypeScript
+AI bot that summarizes Google Meet for DBKlik. Recording is transcribed with FastWhisper and summarized to be sent to the Whatsapp group.
+### DBJobs: Job Portal Website
+**Stack:** Laravel, PHP
+Job portal website made during DBKlik internship. Handled the fullstack development while collaborating with System Analyst and UI/UX designer.
+`,
+
+  profession: `# PROFESSION
+
+## Careers
+- Fullstack & AI Agent Internship (April 2026) at DBKlik
+
+## University
+I am a student who just started university in Ciputra University (UC) - acquiring the 100% Star Scholarship.
+Will be joining the Informatics - Fullstack Development major and is graduating on 2030.
+Seeking to join Apple Developer Academy.
+
+## Independent Learner
+Learned all the skills for Software Engineering and Coding through free sources on the Internet such as FreeCodeCamp, Harvard's CS50, www3.schools, etc. Have made several local projects and build a steady foundation for coding through trial and failure.
+
+## Game Development
+I have learned coding since 2022, with Python as my first language.
+Focused more on Game Development instead of Software Engineer at the time and learned the basics of coding through Unity.
+Never managed to release any games on the public due to copyright.
+
+## Software Engineer
+Started to learn and be interested in Software Engineering at 2025.
+Prioritized websites over Mobile apps because the latter felt a lot more difficult when I tried it previously.
+Learned the basics of web development with HTML, CSS, JS. Then started on learning React and Express JS for a fullstack project.
+Because of pure CSS, I leaned more towards the Backend side of Web Development and focused on databases, APIs, and system architecture.
+Also used Laravel for internship and learned the basics of TailwindCSS.
+`,
+
+  hobbies: `# HOBBIES
+
+## Coding
+My most favorite thing to do is coding. It can be working on personal AI projects, making a website, or building a game - I will always love coding. Even if I face lots of errors and bugs, the ability to solve them and learn through it will always be a great feeling.
+
+## Games
+Enjoys Soulsborne type of games the most. Have played Dark Souls 1 to 3, Sekiro and Elden Ring - cannot try Bloodborne (don't have a PS4). These games are my top because Soulsborne teaches me patience and perseverance which helps in building an endurance mindset to face challenges in the world.
+
+## Calisthenics
+Never had a gym membership so had to go by with Calisthenics. Started in 2020 who couldn't do 10 pushups and now I have achieved Planche and the Front lever. Still currently working on the Planche Pushup and even the One Arm Pullup.
+`,
+
+  contact: `# CONTACT
+
+I'm most active on Whatsapp and Instagram.
+
+## Platforms
+- Whatsapp: 081319990725
+- Instagram: verlin_dev
+- Email: billy.zhong0725@gmail.com
+- Github: Zhong86
+- LinkedIn: Billy Zhong
+`,
+};
+
 // -------------------- Experiences ---------------
 export type LogLevel = "info" | "ok" | "warn";
 export type LogEntry = {

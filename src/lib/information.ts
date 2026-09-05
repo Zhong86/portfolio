@@ -1,6 +1,4 @@
 // src/lib/information.ts
-import fs from "fs";
-import path from "path";
 import { kv } from "@vercel/kv";
 import {
   AboutField,
@@ -11,11 +9,15 @@ import {
   CATEGORIES,
   WEEKLY_GOALS,
   TOP_GOALS,
+  MARKDOWN_TOPICS,
+  MarkdownTopic,
+  DEFAULT_MARKDOWN_INFO,
 } from "@/lib/config";
 
 /**
  * Single registry of everything the Talos agent can look up.
- * - "coding" / "profession" / "hobbies" / "contact" are backed by information/*.md
+ * - "coding" / "profession" / "hobbies" / "contact" are markdown blobs in KV (`info:<topic>`),
+ *   seeded from DEFAULT_MARKDOWN_INFO when no entry exists yet
  * - "about" / "projects" / "goals" are backed by structured data in config.ts
  * Both sources are normalized to plain text here, so the agent doesn't
  * need to know or care where a topic's data actually lives.
@@ -32,15 +34,20 @@ export const INFO_TOPICS = {
 
 export type InfoTopic = keyof typeof INFO_TOPICS;
 
-const MARKDOWN_TOPICS: ReadonlySet<InfoTopic> = new Set(["coding", "profession", "hobbies", "contact"]);
+const MARKDOWN_TOPIC_SET: ReadonlySet<string> = new Set(MARKDOWN_TOPICS);
 
-function loadMarkdownTopic(topic: string): string {
-  const safeTopic = path.basename(topic); // guard against path traversal
-  const filePath = path.join(process.cwd(), "information", `${safeTopic}.md`);
-  if (!fs.existsSync(filePath)) {
-    return `No information file found for topic "${topic}".`;
-  }
-  return fs.readFileSync(filePath, "utf-8");
+/** True for topics whose full text is stored in KV and can be rewritten. */
+export function isEditableTopic(topic: string): topic is MarkdownTopic {
+  return MARKDOWN_TOPIC_SET.has(topic);
+}
+
+function infoKey(topic: MarkdownTopic): string {
+  return `info:${topic}`;
+}
+
+async function loadMarkdownTopic(topic: MarkdownTopic): Promise<string> {
+  const stored = await kv.get<string>(infoKey(topic)).catch(() => null);
+  return typeof stored === "string" && stored.trim() ? stored : DEFAULT_MARKDOWN_INFO[topic];
 }
 
 async function loadAboutTopic(): Promise<string> {
@@ -81,6 +88,16 @@ export async function loadInformation(topic: string): Promise<string> {
     case "goals":
       return loadGoalsTopic();
     default:
-      return loadMarkdownTopic(topic);
+      return loadMarkdownTopic(topic as MarkdownTopic);
   }
+}
+
+/** Overwrites a markdown topic's content in KV. Only editable topics are accepted. */
+export async function saveInformation(topic: MarkdownTopic, content: string): Promise<void> {
+  await kv.set(infoKey(topic), content);
+}
+
+/** Drops the KV entry so the topic falls back to its DEFAULT_MARKDOWN_INFO seed. */
+export async function resetInformation(topic: MarkdownTopic): Promise<void> {
+  await kv.del(infoKey(topic));
 }
