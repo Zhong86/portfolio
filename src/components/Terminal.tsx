@@ -5,6 +5,7 @@ import { resolveCdTarget } from "@/lib/navigation";
 import { AI_MAX_MESSAGES, NAV_ITEMS, PaletteItem, SUDO_MAX_ATTEMPTS } from "@/lib/config";
 import { applyTheme, currentTheme, normalizeTheme, THEME_LABELS, THEMES } from "@/lib/theme";
 import { currentSfxMode, normalizeSfxMode, playSfx, prefetchSfx, setSfxMode, SFX_LABELS, SFX_MODES } from "@/lib/sfx";
+import { isTypingTarget } from "@/lib/keys";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -69,6 +70,18 @@ export default function Terminal() {
   useEffect(() => {
     if (chatMode) setTimeout(() => inputRef.current?.focus(), 300);
   }, [chatMode]);
+
+  // "/" from anywhere on the page drops the caret into the terminal.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "/" || isTypingTarget(e) || sudoMode) return;
+      e.preventDefault(); // otherwise the "/" lands in the input we just focused
+      setAttention(false);
+      inputRef.current?.focus();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [sudoMode]);
 
   useEffect(() => {
     if (sudoMode) setTimeout(() => sudoInputRef.current?.focus(), 300);
@@ -346,7 +359,7 @@ export default function Terminal() {
   const remainingAttempts = SUDO_MAX_ATTEMPTS - sudoAttempts;
 
   const SudoOverlay = sudoMode ? (
-    <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
+    <div data-modal-open className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
       <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto ${sudoExiting ? "animate-fadeOut" : "animate-fadeIn"}`}
         onClick={() => closeSudo()}
@@ -448,7 +461,7 @@ export default function Terminal() {
     return (
       <>
         {SudoOverlay}
-        <div className="fixed inset-0 z-30 flex items-center justify-center pointer-events-none">
+        <div data-modal-open className="fixed inset-0 z-30 flex items-center justify-center pointer-events-none">
           <div
             className={`absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto ${exiting ? "animate-fadeOut" : "animate-fadeIn"}`}
             onClick={exitChat}
@@ -616,7 +629,7 @@ export default function Terminal() {
                 style={{ caretColor: "var(--color-accent)" }}
               />
               <span className="hidden lg:block font-mono text-[11px] text-text-dimmer shrink-0">
-                try: cd projects
+                {focused ? "try: cd projects" : "press / to focus"}
               </span>
             </div>
           </div>
