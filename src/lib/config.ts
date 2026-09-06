@@ -13,6 +13,7 @@ export const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd contact", label: "contact info", keyword: "contact" },
   { cmd: "talos_ai", label: "ask AI", keyword: "ai" },
   { cmd: "theme nier", label: "switch to NieR:Automata theme", keyword: "theme" },
+  { cmd: "theme souls", label: "switch to Dark Souls III theme", keyword: "theme" },
   { cmd: "theme default", label: "back to default theme", keyword: "theme" },
 ];
 

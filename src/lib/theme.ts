@@ -4,7 +4,7 @@
 
 export const THEME_STORAGE_KEY = "theme";
 
-export const THEMES = ["default", "nier"] as const;
+export const THEMES = ["default", "nier", "souls"] as const;
 export type ThemeName = (typeof THEMES)[number];
 
 const ALIASES: Record<string, ThemeName> = {
@@ -13,6 +13,13 @@ const ALIASES: Record<string, ThemeName> = {
   off: "default",
   main: "default",
   nier: "nier",
+  souls: "souls",
+};
+
+export const THEME_LABELS: Record<ThemeName, string> = {
+  default: "default",
+  nier: "NieR:Automata",
+  souls: "Dark Souls III",
 };
 
 export function normalizeTheme(input: string): ThemeName | null {

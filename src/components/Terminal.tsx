@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { resolveCdTarget } from "@/lib/navigation";
 import { AI_MAX_MESSAGES, NAV_ITEMS, PaletteItem, SUDO_MAX_ATTEMPTS } from "@/lib/config";
-import { applyTheme, currentTheme, normalizeTheme, THEMES } from "@/lib/theme";
+import { applyTheme, currentTheme, normalizeTheme, THEME_LABELS, THEMES } from "@/lib/theme";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -243,7 +243,7 @@ export default function Terminal() {
       }
       applyTheme(theme);
       setValue("");
-      showError(theme === "nier" ? "✓ theme: NieR:Automata" : "✓ theme: default");
+      showError(`✓ theme: ${THEME_LABELS[theme]}`);
       return;
     }
 

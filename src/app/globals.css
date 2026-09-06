@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./themes/nier.css";
+@import "./themes/souls.css";
 
 :root {
   --color-bg: #0c0d10;

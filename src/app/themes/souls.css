@@ -1,0 +1,146 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   DARK SOULS III theme — activated with `theme souls` in the terminal.
+   Scoped under [data-theme="souls"], so the default theme is untouched.
+   Structural rules use attribute selectors ([class*="..."]) so no component
+   markup has to change.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+:root[data-theme="souls"] {
+  /* Ash and soot */
+  --color-bg: #0a0908;
+  --color-surface: #141210;
+  --color-surface-2: #1a1714;
+  --color-surface-3: #241f19;
+  --color-hairline: #4c4030;
+
+  /* Faded parchment lettering */
+  --color-text: #cec4ae;
+  --color-text-dim: #9c917a;
+  --color-text-dimmer: #6f6555;
+
+  /* Bonfire ember */
+  --color-accent: #d89a3c;
+  --color-accent-dim: #d89a3c26;
+  --color-accent-rgb: 216, 154, 60;
+
+  --color-green: #93a06d;
+  --color-blue: #8394a8;
+}
+
+/* Soot texture + heavy vignette, like the DS3 menu backdrop */
+:root[data-theme="souls"] body {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(216, 154, 60, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.75) 100%);
+  background-attachment: fixed;
+}
+
+/* ── Engraved serif lettering for headings ─────────────────────────────────── */
+:root[data-theme="souls"] h1,
+:root[data-theme="souls"] h2,
+:root[data-theme="souls"] h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ── Panels: stone slab, gilt hairline, deep shadow ────────────────────────── */
+:root[data-theme="souls"] [class*="rounded"] {
+  border-radius: 2px !important;
+}
+:root[data-theme="souls"] span[class*="rounded-full"] {
+  border-radius: 9999px !important;
+}
+
+:root[data-theme="souls"] [class*="bg-surface-2"],
+:root[data-theme="souls"] [class*="bg-surface-3"] {
+  background-color: var(--color-surface-2) !important;
+  border-color: var(--color-hairline) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(216, 154, 60, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Scrims go pitch black — DS3 dims the world hard behind its menus */
+:root[data-theme="souls"] [class*="bg-black/"] {
+  background-color: rgba(0, 0, 0, 0.82) !important;
+}
+
+/* ── Selection: the ember bar that sweeps in behind the highlighted row ───── */
+:root[data-theme="souls"] [class*="bg-accent-dim"],
+:root[data-theme="souls"] [class*="bg-accent/15"],
+:root[data-theme="souls"] [class*="bg-accent/20"] {
+  background-image: linear-gradient(
+    90deg,
+    rgba(216, 154, 60, 0.55) 0%,
+    rgba(216, 154, 60, 0.16) 45%,
+    transparent 100%
+  ) !important;
+  background-color: transparent !important;
+  color: #f0e2c4 !important;
+  box-shadow: inset 0 -1px 0 rgba(216, 154, 60, 0.5);
+}
+:root[data-theme="souls"] [class*="bg-accent-dim"] span,
+:root[data-theme="souls"] [class*="bg-accent/15"] span {
+  color: inherit !important;
+}
+
+/* Status pills sitting on the hairline fill need lighter ink */
+:root[data-theme="souls"] [class*="bg-hairline"] {
+  color: #e6dcc4 !important;
+}
+
+/* ── Buttons: gilt-edged plates that catch the firelight on hover ─────────── */
+:root[data-theme="souls"] button[class*="bg-accent/10"],
+:root[data-theme="souls"] a[class*="border-accent"] {
+  font-family: Georgia, "Times New Roman", serif;
+  background-color: rgba(216, 154, 60, 0.06) !important;
+  border: 1px solid rgba(216, 154, 60, 0.45) !important;
+  color: var(--color-accent) !important;
+  letter-spacing: 0.08em;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+}
+:root[data-theme="souls"] button[class*="bg-accent/10"]:hover:not(:disabled),
+:root[data-theme="souls"] a[class*="border-accent"]:hover {
+  background-color: rgba(216, 154, 60, 0.16) !important;
+  color: #f0e2c4 !important;
+  box-shadow: 0 0 14px rgba(216, 154, 60, 0.28);
+}
+
+/* ── Inputs ─────────────────────────────────────────────────────────────────── */
+:root[data-theme="souls"] input,
+:root[data-theme="souls"] textarea {
+  caret-color: var(--color-accent) !important;
+}
+:root[data-theme="souls"] input[class*="bg-surface"],
+:root[data-theme="souls"] textarea[class*="bg-surface"] {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  border-color: var(--color-hairline) !important;
+}
+
+/* ── The terminal bar: a gilded slab lit from within ───────────────────────── */
+:root[data-theme="souls"] [class*="bg-surface-2/95"] {
+  background-color: rgba(16, 14, 12, 0.96) !important;
+  border: 1px solid rgba(216, 154, 60, 0.4) !important;
+  box-shadow:
+    inset 0 0 24px rgba(216, 154, 60, 0.06),
+    0 14px 36px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Hairline rules take on the thin gold divider look of the DS3 menus */
+:root[data-theme="souls"] [class*="border-hairline"] {
+  border-color: rgba(216, 154, 60, 0.22) !important;
+}
+
+/* Scrollbars */
+:root[data-theme="souls"] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+:root[data-theme="souls"] ::-webkit-scrollbar-thumb {
+  background: rgba(216, 154, 60, 0.35);
+}
+:root[data-theme="souls"] ::-webkit-scrollbar-track {
+  background: transparent;
+}
