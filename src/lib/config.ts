@@ -9,7 +9,6 @@ export const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd goals", label: "AWS internship goal tracker", keyword: "goals" },
   { cmd: "cd stats", label: "github & leetcode stats", keyword: "stats" },
   { cmd: "cd projects", label: "projects applied / built", keyword: "projects" },
-  { cmd: "cd learn", label: "learn logs", keyword: "learn" },
   { cmd: "cd contact", label: "contact info", keyword: "contact" },
   { cmd: "talos_ai", label: "ask AI", keyword: "ai" },
   { cmd: "theme nier", label: "switch to NieR:Automata theme", keyword: "theme" },

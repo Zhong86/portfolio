@@ -15,7 +15,6 @@ export const navItems: NavItem[] = [
   { href: "/goals", fileLabel: "goals.log", navLabel: "goals", segment: "goals" },
   { href: "/stats", fileLabel: "stats.json", navLabel: "stats", segment: "stats" },
   { href: "/projects", fileLabel: "projects/", navLabel: "work", segment: "projects" },
-  { href: "/learn", fileLabel: "learn.log", navLabel: "study", segment: "learn" },
   { href: "/tools", fileLabel: "tools.json", navLabel: "tools", segment: "tools" },
   { href: "/contact", fileLabel: "contact.json", navLabel: "contact", segment: "contact" },
 ];
@@ -36,7 +35,6 @@ const cdAliases: Record<string, string> = {
   stats: "/stats",
   github: "/stats",
   activity: "/stats",
-  learn: "/learn",
   tools: "/tools",
   contact: "/contact",
   anapsychis: "/anapsychis",

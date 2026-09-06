@@ -129,7 +129,7 @@ function LangBar({ langs }: { langs: Record<string, number> }) {
     <div className="border border-hairline rounded-md bg-surface overflow-hidden">
       <div className="px-4 py-2.5 border-b border-hairline font-mono text-[11px] text-text-dimmer flex justify-between">
         <span className="text-text-dim">languages.json</span>
-        <span>by last ${LAST_PROJ} updated repos</span>
+        <span>by last {LAST_PROJ} updated repos</span>
       </div>
       <div className="px-4 py-4">
         {/* Bar */}

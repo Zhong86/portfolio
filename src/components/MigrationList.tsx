@@ -2,6 +2,7 @@
 
 import { Migration } from "@/lib/config";
 import { useEffect, useState, useRef } from "react";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 function sudoToken(): string {
   return localStorage.getItem("sudoToken") ?? "";
@@ -98,7 +99,9 @@ function MigrationItem({
       </button>
       {open && (
         <div className="px-4.5 pb-4.5 border-t border-hairline bg-surface">
-          <p className="font-sans text-sm text-text-dim my-4 max-w-[600px]">{migration.description}</p>
+          <div className="my-4 max-w-[600px]">
+            <MarkdownRenderer content={migration.description} />
+          </div>
           <div className="flex gap-2 flex-wrap mt-3">
             {migration.stack.map((tag) => (
               <span key={tag} className="font-mono text-[11.5px] px-2.5 py-1 border border-hairline rounded text-text-dim">
@@ -147,6 +150,7 @@ function ProjectEditorModal({
   const [description, setDescription] = useState(initial?.description ?? "");
   const [stackInput, setStackInput] = useState(initial?.stack.join(", ") ?? "");
   const [linksInput, setLinksInput] = useState(initial ? linksToInput(initial.links) : "");
+  const [tab, setTab] = useState<"write" | "preview">("write");
   const titleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -214,14 +218,42 @@ function ProjectEditorModal({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide">description</span>
-            <textarea
-              value={description}
-              rows={4}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What is this project and what did you build..."
-              className="font-mono text-[12.5px] text-text bg-surface border border-hairline rounded-md px-3 py-2 leading-relaxed outline-none focus:border-accent/50 transition-colors resize-none placeholder:text-text-dimmer"
-            />
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide">description (markdown)</span>
+              <div className="flex gap-1.5">
+                {(["write", "preview"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setTab(t)}
+                    className={`font-mono text-[11px] px-3 py-1 rounded transition-colors ${
+                      tab === t
+                        ? "bg-accent/15 text-accent border border-accent/30"
+                        : "text-text-dimmer hover:text-text border border-transparent"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {tab === "write" ? (
+              <textarea
+                value={description}
+                rows={8}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={"What is this project and what did you build...\n\nSupports **bold**, *italic*, `code`, # headings, - lists"}
+                className="font-mono text-[12.5px] text-text bg-surface border border-hairline rounded-md px-3 py-2 leading-relaxed outline-none focus:border-accent/50 transition-colors resize-none placeholder:text-text-dimmer"
+              />
+            ) : (
+              <div className="min-h-[176px] max-h-[320px] overflow-y-auto bg-surface border border-hairline rounded-md px-4 py-2">
+                {description.trim() ? (
+                  <MarkdownRenderer content={description} />
+                ) : (
+                  <p className="font-mono text-[12px] text-text-dimmer italic">Nothing to preview yet.</p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
