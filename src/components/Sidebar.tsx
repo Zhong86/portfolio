@@ -55,6 +55,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              data-sfx="move"
               className={`flex items-center gap-2.5 px-2 py-1.5 rounded mb-0.5 transition-colors ${isActive
                   ? "text-accent bg-accent-dim"
                   : "text-text-dim hover:text-text hover:bg-surface"

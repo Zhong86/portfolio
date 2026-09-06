@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { resolveCdTarget } from "@/lib/navigation";
 import { AI_MAX_MESSAGES, NAV_ITEMS, PaletteItem, SUDO_MAX_ATTEMPTS } from "@/lib/config";
 import { applyTheme, currentTheme, normalizeTheme, THEME_LABELS, THEMES } from "@/lib/theme";
+import { currentSfxMode, normalizeSfxMode, playSfx, prefetchSfx, setSfxMode, SFX_LABELS, SFX_MODES } from "@/lib/sfx";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -242,8 +243,38 @@ export default function Terminal() {
         return;
       }
       applyTheme(theme);
+      prefetchSfx();
+      playSfx("init"); // announce the new theme with its own boot sound
       setValue("");
       showError(`✓ theme: ${THEME_LABELS[theme]}`);
+      return;
+    }
+
+    if (cmd === "sfx") {
+      const arg = parts[1];
+      if (!arg) {
+        showError(`sfx: current "${currentSfxMode()}" · usage: sfx <${SFX_MODES.join("|")}>`);
+        return;
+      }
+      const sfxMode = normalizeSfxMode(arg);
+      if (!sfxMode) {
+        showError(`sfx: unknown mode: ${arg} · available: ${SFX_MODES.join(", ")}`);
+        return;
+      }
+      setSfxMode(sfxMode);
+      setValue("");
+      if (sfxMode === "off") {
+        showError("✓ sfx: off");
+      } else {
+        prefetchSfx();
+        playSfx("select"); // preview the new volume
+        const themed = currentTheme() !== "default";
+        showError(
+          themed
+            ? `✓ sfx: ${SFX_LABELS[sfxMode]}`
+            : `✓ sfx: ${SFX_LABELS[sfxMode]} · silent on the default theme — try: theme nier`
+        );
+      }
       return;
     }
 
@@ -285,6 +316,7 @@ export default function Terminal() {
     }
     if (showPalette && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
       e.preventDefault();
+      playSfx("move");
       setActiveIndex((prev) => {
         const dir = e.key === "ArrowDown" ? 1 : -1;
         return (prev + dir + filtered.length) % filtered.length;
@@ -297,6 +329,7 @@ export default function Terminal() {
       return;
     }
     if (e.key === "Enter") {
+      playSfx("select");
       if (showPalette && filtered[activeIndex] && filtered.length > 0) {
         runCommand(filtered[activeIndex].cmd);
         setValue("");
@@ -533,6 +566,7 @@ export default function Terminal() {
                 <button
                   key={item.cmd}
                   type="button"
+                  data-sfx="move"
                   onMouseDown={(e) => { e.preventDefault(); runCommand(item.cmd); setValue(""); }}
                   onMouseEnter={() => setActiveIndex(i)}
                   className={`w-full flex items-center justify-between gap-3 px-4 py-2 font-mono text-[13px] text-left transition-colors ${i === activeIndex ? "bg-accent/15 text-accent" : "text-text hover:bg-surface-3/60"}`}

@@ -47,6 +47,7 @@ export default function MobileNav() {
           <Link
             key={item.href}
             href={item.href}
+            data-sfx="move"
             className={`
               shrink-0 px-4 py-2 font-mono text-xs whitespace-nowrap
               border-b-2 transition-colors

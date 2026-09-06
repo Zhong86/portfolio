@@ -15,6 +15,9 @@ export const NAV_ITEMS: PaletteItem[] = [
   { cmd: "theme nier", label: "switch to NieR:Automata theme", keyword: "theme" },
   { cmd: "theme souls", label: "switch to Dark Souls III theme", keyword: "theme" },
   { cmd: "theme default", label: "back to default theme", keyword: "theme" },
+  { cmd: "sfx default", label: "UI sounds at full volume", keyword: "sfx" },
+  { cmd: "sfx quiet", label: "UI sounds, turned down", keyword: "sfx" },
+  { cmd: "sfx off", label: "mute UI sounds", keyword: "sfx" },
 ];
 
 // -------------------- HOME -------------------

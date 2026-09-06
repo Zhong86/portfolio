@@ -5,6 +5,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import Terminal from "@/components/Terminal";
+import SfxProvider from "@/components/SfxProvider";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 export const metadata: Metadata = {
@@ -45,6 +46,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased font-sans">
         <Analytics />
+        <SfxProvider />
         <MobileNav />
         <div className="flex max-w-[1180px] mx-auto">
           <Sidebar />
