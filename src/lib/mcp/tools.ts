@@ -6,6 +6,7 @@ import {
   INFO_TOPICS,
   isEditableTopic,
   loadInformation,
+  loadWeeklyProgress,
   saveInformation,
   resetInformation,
 } from "@/lib/information";
@@ -121,7 +122,17 @@ export const MCP_TOOLS: McpTool[] = [
       await resetInformation(topic);
       return `Reset "${topic}" to its default content.`;
     },
-  }
+  },
+
+  // ---------------- goals ----------------
+  {
+    name: "get_weekly_progress",
+    description:
+      "Read just this week's sprint checklist from Billy's goal tracker: each weekly goal with its current count, target, and how many are left. Cheaper than load_information(goals), which also returns long-term categories and priorities.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    requiresSudo: false,
+    handler: async () => loadWeeklyProgress(),
+  },
 ];
 
 export const TOOLS_BY_NAME = new Map(MCP_TOOLS.map((t) => [t.name, t]));

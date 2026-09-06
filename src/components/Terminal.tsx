@@ -167,14 +167,20 @@ export default function Terminal() {
         method: "POST",
         body: JSON.stringify({ messages: history }),
       });
-      const reader = res.body!.getReader();
+      if (!res.ok || !res.body) throw new Error(`ai request failed (${res.status})`);
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let text = "";
+      let buffer = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value);
-        for (const line of chunk.split("\n")) {
+        // stream: true so multi-byte characters split across chunks survive decoding.
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        // The trailing fragment may be half a data: line still in flight — hold it back.
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
           if (line.startsWith("data: ") && line !== "data: [DONE]") {
             try {
               const { text: delta } = JSON.parse(line.slice(6));

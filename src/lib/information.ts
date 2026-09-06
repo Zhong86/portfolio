@@ -72,6 +72,30 @@ async function loadProjectsTopic(): Promise<string> {
     .join("\n\n");
 }
 
+/** One "- label: done/target unit — status" line per weekly sprint goal. */
+function weeklyLines(values: Record<string, number>): string {
+  return WEEKLY_GOALS.map((g) => {
+    const done = values[g.id] ?? 0;
+    const status = done >= g.target ? "done" : `${g.target - done} to go`;
+    return `- ${g.label}: ${done}/${g.target} ${g.unit} — ${status}`;
+  }).join("\n");
+}
+
+/**
+ * Just this week's sprint checklist — the smallest useful payload, for callers
+ * that poll on a schedule and don't want the whole goals dump.
+ */
+export async function loadWeeklyProgress(): Promise<string> {
+  const week = await resolveCurrentWeek().catch(() => null);
+  if (!week) return "Weekly progress is unavailable right now.";
+
+  const values = week.values;
+  const done = WEEKLY_GOALS.filter((g) => (values[g.id] ?? 0) >= g.target).length;
+  const headline = done === WEEKLY_GOALS.length ? "all targets hit" : `${done}/${WEEKLY_GOALS.length} targets hit`;
+
+  return `Week of ${week.key} — ${headline}\n${weeklyLines(values)}`;
+}
+
 /**
  * Goals, with the live counters folded in so the agent reports actual progress
  * rather than just the targets. Reads the same KV keys the goals page does.
@@ -83,7 +107,6 @@ async function loadGoalsTopic(): Promise<string> {
   ]);
 
   const overallValues = overall ?? {};
-  const weeklyValues = week?.values ?? {};
 
   const cats = CATEGORIES.map((c) => {
     const done = overallValues[c.id] ?? 0;
@@ -91,12 +114,7 @@ async function loadGoalsTopic(): Promise<string> {
     return `- ${c.label}: ${done}/${c.target} ${c.unit} (${pct}%)`;
   }).join("\n");
 
-  const weekly = WEEKLY_GOALS.map((g) => {
-    const done = weeklyValues[g.id] ?? 0;
-    const status = done >= g.target ? "done" : `${g.target - done} to go`;
-    return `- ${g.label}: ${done}/${g.target} ${g.unit} — ${status}`;
-  }).join("\n");
-
+  const weekly = weeklyLines(week?.values ?? {});
   const top = TOP_GOALS.map((g) => `- ${g.title}: ${g.desc}`).join("\n");
   const weekLabel = week ? `## This week's sprint (week of ${week.key})` : "## This week's sprint";
 

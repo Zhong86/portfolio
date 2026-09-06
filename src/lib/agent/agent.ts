@@ -3,7 +3,7 @@ import Groq from "groq-sdk";
 import { TALOS_SYSTEM_PROMPT } from "./prompt";
 import { agentTools, executeAgentTool } from "./tools";
 
-const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+const DEFAULT_MODEL = "openai/gpt-oss-120b";
 const MAX_TOOL_ITERATIONS = 2;
 
 export type AgentMessage = Groq.Chat.Completions.ChatCompletionMessageParam;
