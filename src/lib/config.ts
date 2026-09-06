@@ -12,6 +12,8 @@ export const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd learn", label: "learn logs", keyword: "learn" },
   { cmd: "cd contact", label: "contact info", keyword: "contact" },
   { cmd: "talos_ai", label: "ask AI", keyword: "ai" },
+  { cmd: "theme nier", label: "switch to NieR:Automata theme", keyword: "theme" },
+  { cmd: "theme default", label: "back to default theme", keyword: "theme" },
 ];
 
 // -------------------- HOME -------------------

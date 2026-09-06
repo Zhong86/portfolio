@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { resolveCdTarget } from "@/lib/navigation";
 import { AI_MAX_MESSAGES, NAV_ITEMS, PaletteItem, SUDO_MAX_ATTEMPTS } from "@/lib/config";
+import { applyTheme, currentTheme, normalizeTheme, THEMES } from "@/lib/theme";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -185,7 +186,9 @@ export default function Terminal() {
     const cdMatch = trimmed.match(/^cd\s*(.*)$/i);
     if (cdMatch) {
       const rest = cdMatch[1];
-      return NAV_ITEMS.filter((item) => fuzzyMatch(rest, item.keyword));
+      return NAV_ITEMS.filter(
+        (item) => item.cmd.startsWith("cd ") && fuzzyMatch(rest, item.keyword)
+      );
     }
     if (!trimmed) return NAV_ITEMS;
     return NAV_ITEMS.filter(
@@ -224,6 +227,23 @@ export default function Terminal() {
         handleAsk(prompt || value);
       }
       setValue("");
+      return;
+    }
+
+    if (cmd === "theme") {
+      const arg = parts[1];
+      if (!arg) {
+        showError(`theme: current "${currentTheme()}" · usage: theme <${THEMES.join("|")}>`);
+        return;
+      }
+      const theme = normalizeTheme(arg);
+      if (!theme) {
+        showError(`theme: unknown theme: ${arg} · available: ${THEMES.join(", ")}`);
+        return;
+      }
+      applyTheme(theme);
+      setValue("");
+      showError(theme === "nier" ? "✓ theme: NieR:Automata" : "✓ theme: default");
       return;
     }
 

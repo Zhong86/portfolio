@@ -1,0 +1,146 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   NieR:Automata theme — activated with `theme nier` in the terminal.
+   Everything is scoped under [data-theme="nier"] so the default theme is
+   untouched. Structural rules use attribute selectors ([class*="..."]) so no
+   component markup has to change.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+:root[data-theme="nier"] {
+  /* Faded parchment / sun-bleached beige */
+  --color-bg: #ccc8b6;
+  --color-surface: #c3bfab;
+  --color-surface-2: #d0ccba;
+  --color-surface-3: #b9b5a1;
+  --color-hairline: #9d9986;
+
+  /* Dark olive ink */
+  --color-text: #454138;
+  --color-text-dim: #5b5749;
+  --color-text-dimmer: #6b6755;
+
+  /* In NieR the "accent" is the ink itself — highlight = inverted block */
+  --color-accent: #454138;
+  --color-accent-dim: #45413826;
+  --color-accent-rgb: 69, 65, 56;
+
+  --color-green: #4f5a3f;
+  --color-blue: #4a5560;
+}
+
+/* Faint scan/grid texture behind everything, like the NieR menu background */
+:root[data-theme="nier"] body {
+  background-color: var(--color-bg);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(69, 65, 56, 0.045) 0px,
+      rgba(69, 65, 56, 0.045) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(135deg, rgba(69, 65, 56, 0.05) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+
+/* ── Hard edges. NieR has no rounded corners. ───────────────────────────────── */
+:root[data-theme="nier"] [class*="rounded"] {
+  border-radius: 0 !important;
+}
+/* …except the status dots, which stay circular */
+:root[data-theme="nier"] span[class*="rounded-full"] {
+  border-radius: 9999px !important;
+}
+
+/* ── Panels: flat fill, hard border, offset drop shadow ────────────────────── */
+:root[data-theme="nier"] [class*="shadow-2xl"],
+:root[data-theme="nier"] [class*="shadow-xl"],
+:root[data-theme="nier"] [class*="shadow-lg"] {
+  box-shadow: 5px 5px 0 rgba(69, 65, 56, 0.16) !important;
+}
+
+:root[data-theme="nier"] [class*="bg-surface-2"],
+:root[data-theme="nier"] [class*="bg-surface-3"] {
+  backdrop-filter: none !important;
+  border-color: var(--color-hairline) !important;
+}
+
+/* Modal / overlay scrims are light in NieR, not black */
+:root[data-theme="nier"] [class*="bg-black/"] {
+  background-color: rgba(204, 200, 182, 0.72) !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+/* ── Selection = inverted block (the signature NieR highlight) ─────────────── */
+:root[data-theme="nier"] [class*="bg-accent-dim"],
+:root[data-theme="nier"] [class*="bg-accent/15"],
+:root[data-theme="nier"] [class*="bg-accent/20"] {
+  background-color: var(--color-accent) !important;
+  color: var(--color-bg) !important;
+}
+:root[data-theme="nier"] [class*="bg-accent-dim"] span,
+:root[data-theme="nier"] [class*="bg-accent/15"] span {
+  color: inherit !important;
+}
+
+/* Status pills sitting on the hairline fill need the dark ink to stay legible */
+:root[data-theme="nier"] [class*="bg-hairline"] {
+  color: var(--color-text) !important;
+}
+
+/* ── Buttons: outlined chip, inverts on hover ───────────────────────────────── */
+:root[data-theme="nier"] button[class*="bg-accent/10"],
+:root[data-theme="nier"] a[class*="border-accent"] {
+  background-color: transparent !important;
+  border: 1px solid var(--color-accent) !important;
+  color: var(--color-accent) !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+:root[data-theme="nier"] button[class*="bg-accent/10"]:hover:not(:disabled),
+:root[data-theme="nier"] a[class*="border-accent"]:hover {
+  background-color: var(--color-accent) !important;
+  color: var(--color-bg) !important;
+}
+
+/* ── Inputs ─────────────────────────────────────────────────────────────────── */
+:root[data-theme="nier"] input,
+:root[data-theme="nier"] textarea {
+  caret-color: var(--color-accent) !important;
+}
+:root[data-theme="nier"] input[class*="bg-surface"],
+:root[data-theme="nier"] textarea[class*="bg-surface"] {
+  background-color: rgba(69, 65, 56, 0.06) !important;
+  border-color: var(--color-hairline) !important;
+}
+
+/* ── The terminal bar itself ────────────────────────────────────────────────── */
+:root[data-theme="nier"] [class*="bg-surface-2/95"] {
+  background-color: var(--color-surface-2) !important;
+  border: 1px solid var(--color-accent) !important;
+  box-shadow: 5px 5px 0 rgba(69, 65, 56, 0.16) !important;
+}
+
+/* Section headings get the wide, quiet NieR letterspacing */
+:root[data-theme="nier"] h1,
+:root[data-theme="nier"] h2 {
+  letter-spacing: 0.04em;
+}
+
+/* Dotted rule under panel headers, echoing the menu chrome */
+:root[data-theme="nier"] [class*="border-b"][class*="border-hairline"] {
+  border-bottom-style: dashed !important;
+  border-bottom-color: var(--color-hairline) !important;
+}
+
+/* Scrollbars */
+:root[data-theme="nier"] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+:root[data-theme="nier"] ::-webkit-scrollbar-thumb {
+  background: rgba(69, 65, 56, 0.4);
+}
+:root[data-theme="nier"] ::-webkit-scrollbar-track {
+  background: transparent;
+}
