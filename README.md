@@ -25,7 +25,7 @@ Navigation targets are defined once in `src/lib/navigation.ts` and reused by the
 | `/` | `HomePage` + `LogStream` | Landing page with a short bio and a scrolling "career.log" of milestones |
 | `/about` | `SchemaTable` | Personal info rendered as a schema/table (roles, stack, focus areas) |
 | `/stats` | `GithubStats`, `LeetcodeStats` | Live GitHub contribution heatmap/languages and LeetCode solve stats, pulled from `/api/github` and `/api/leetcode` |
-| `/projects` | `MigrationList` | Expandable list of projects, styled as DB "migrations" (PROD/ARCHIVED) |
+| `/projects` | `MigrationList` | Expandable list of projects, styled as DB "migrations" (PROD/PERSONAL) |
 | `/learn` | `LearnLogs` | Markdown-based learning journal, fetched from `/api/logs` (backed by KV) |
 | `/tools` | `ToolLinks` | Curated links to tools/resources, fetched from `/api/tools` (backed by KV) |
 | `/contact` | `ContactGrid` | Direct contact links (email, WhatsApp, GitHub, Instagram, LinkedIn, Telegram) |

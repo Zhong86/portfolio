@@ -18,7 +18,7 @@ function nextNum(projects: Migration[]): string {
 }
 
 function isValidStatus(value: unknown): value is Migration["status"] {
-  return value === "PROD" || value === "ARCHIVED";
+  return value === "PROD" || value === "PERSONAL";
 }
 
 function sanitizeStack(value: unknown): string[] {

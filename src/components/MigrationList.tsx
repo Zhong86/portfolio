@@ -134,7 +134,7 @@ function ProjectEditorModal({
   initial?: Migration;
   onSave: (data: {
     title: string;
-    status: "PROD" | "ARCHIVED";
+    status: "PROD" | "PERSONAL";
     description: string;
     stack: string[];
     links: { label: string; href: string }[];
@@ -143,7 +143,7 @@ function ProjectEditorModal({
   saving: boolean;
 }) {
   const [title, setTitle] = useState(initial?.title ?? "");
-  const [status, setStatus] = useState<"PROD" | "ARCHIVED">(initial?.status ?? "PROD");
+  const [status, setStatus] = useState<"PROD" | "PERSONAL">(initial?.status ?? "PROD");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [stackInput, setStackInput] = useState(initial?.stack.join(", ") ?? "");
   const [linksInput, setLinksInput] = useState(initial ? linksToInput(initial.links) : "");
@@ -196,7 +196,7 @@ function ProjectEditorModal({
           <div className="flex flex-col gap-1.5">
             <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide">status</span>
             <div className="flex gap-1.5">
-              {(["PROD", "ARCHIVED"] as const).map((s) => (
+              {(["PROD", "PERSONAL"] as const).map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -307,7 +307,7 @@ export default function MigrationList() {
 
   async function handleSave(data: {
     title: string;
-    status: "PROD" | "ARCHIVED";
+    status: "PROD" | "PERSONAL";
     description: string;
     stack: string[];
     links: { label: string; href: string }[];

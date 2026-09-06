@@ -169,7 +169,7 @@ export type Migration = {
   id: string;
   num: string;
   title: string;
-  status: "PROD" | "ARCHIVED";
+  status: "PROD" | "PERSONAL";
   description: string;
   stack: string[];
   links: { label: string; href: string }[];
@@ -190,7 +190,7 @@ export const DEFAULT_PROJECTS: Migration[] = [
     id: "joblect",
     num: "0004",
     title: "JobLect: Automated Job Searching",
-    status: "ARCHIVED",
+    status: "PERSONAL",
     description:
       "Automating the process of job searching for users and filters jobs that matches with user's preferences.",
     stack: ["TypeScript", "NextJS", "Python", "LangGraph", "Supabase", "Stripe"],
@@ -200,7 +200,7 @@ export const DEFAULT_PROJECTS: Migration[] = [
     id: "purchase-order-agent",
     num: "0003",
     title: "Automated Purchase Order Agent",
-    status: "ARCHIVED",
+    status: "PERSONAL",
     description:
       "Collaborated in a project that automates the process of Purchase Orders for DBKlik",
     stack: ["Python", "LangGraph"],
@@ -210,7 +210,7 @@ export const DEFAULT_PROJECTS: Migration[] = [
     id: "googlemeet-ai",
     num: "0002",
     title: "GoogleMeet AI",
-    status: "ARCHIVED",
+    status: "PERSONAL",
     description:
       "AI bot that summarizes Google Meet for DBKlik. Recoding is transcribed with FastWhisper and summarized to be sent to the Whatsapp group",
     stack: ["Openclaw", "TypeScript"],
