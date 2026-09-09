@@ -133,6 +133,29 @@
   border-bottom-color: var(--color-hairline) !important;
 }
 
+/* ── Reveal: same wipe as the default theme, plus the one-off flicker the
+   NieR menus do as a panel settles. ─────────────────────────────────────────── */
+@keyframes nier-theme-flicker {
+  0%, 100% { opacity: 1; }
+  38% { opacity: 0.55; }
+  44% { opacity: 1; }
+  52% { opacity: 0.78; }
+}
+
+/* Longhands only — the staggered animation-delay from globals.css must survive. */
+:root[data-theme="nier"] .animate-page-in > * {
+  animation-name: nier-wipe-in, nier-theme-flicker;
+  animation-duration: 0.62s, 0.5s;
+  animation-timing-function: cubic-bezier(0.16, 0.84, 0.28, 1), steps(1, end);
+  animation-fill-mode: backwards, backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="nier"] .animate-page-in > * {
+    animation: none;
+  }
+}
+
 /* Scrollbars */
 :root[data-theme="nier"] ::-webkit-scrollbar {
   width: 6px;

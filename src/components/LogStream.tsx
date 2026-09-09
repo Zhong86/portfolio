@@ -25,7 +25,7 @@ export default function LogStream() {
         {visibleLogs.map((l, i) => (
           <div
             key={i}
-            className="flex gap-3 px-4 py-1.5 font-mono text-[12.5px] opacity-0 animate-fade-in-up flex-wrap sm:flex-nowrap sm:whitespace-nowrap hover:bg-surface-2"
+            className="flex gap-3 px-4 py-1.5 font-mono text-[12.5px] animate-fade-in-up flex-wrap sm:flex-nowrap sm:whitespace-nowrap hover:bg-surface-2"
             style={{ animationDelay: `${(i % PAGE_SIZE) * 0.12}s` }}
           >
             <span className="text-text-dimmer shrink-0">{l.ts}</span>

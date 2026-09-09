@@ -50,25 +50,104 @@ body {
     margin: 0;
   }
 
-  @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(-2px); }
-  to { opacity: 1; transform: translateY(0); }
+  /* ── NieR-style reveal ──────────────────────────────────────────────────────
+     Content is wiped in behind a soft gradient mask that sweeps left→right,
+     paired with a short directional drift and a blur that resolves early. The
+     mask is declared *inside* the keyframes so it evaporates when the
+     animation ends — a lingering mask would clip fixed-position modals.
+     ────────────────────────────────────────────────────────────────────────── */
+
+  @keyframes nier-wipe-in {
+    0% {
+      opacity: 0;
+      transform: translate3d(-16px, 0, 0);
+      filter: blur(5px);
+      -webkit-mask-image: linear-gradient(90deg, #000 0 45%, rgba(0, 0, 0, 0.4) 62%, transparent 78%);
+      -webkit-mask-size: 400% 100%;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: 100% 0;
+      mask-image: linear-gradient(90deg, #000 0 45%, rgba(0, 0, 0, 0.4) 62%, transparent 78%);
+      mask-size: 400% 100%;
+      mask-repeat: no-repeat;
+      mask-position: 100% 0;
+    }
+    45% {
+      opacity: 1;
+    }
+    70% {
+      filter: blur(0);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+      filter: blur(0);
+      -webkit-mask-image: linear-gradient(90deg, #000 0 45%, rgba(0, 0, 0, 0.4) 62%, transparent 78%);
+      -webkit-mask-size: 400% 100%;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: 0 0;
+      mask-image: linear-gradient(90deg, #000 0 45%, rgba(0, 0, 0, 0.4) 62%, transparent 78%);
+      mask-size: 400% 100%;
+      mask-repeat: no-repeat;
+      mask-position: 0 0;
+    }
   }
 
-  @keyframes page-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  /* The bright edge that rides just ahead of the wipe. */
+  @keyframes nier-scan {
+    0% { transform: scaleX(0); opacity: 0; }
+    12% { opacity: 0.9; }
+    100% { transform: scaleX(1); opacity: 0; }
   }
 
-  .animate-fade-in-up { animation: fade-in-up 0.4s ease forwards; }
-  .animate-page-in { animation: page-in 0.22s ease; }
+  /* `backwards`, never `forwards`: the mask must not outlive the animation. */
+  .animate-fade-in-up {
+    animation: nier-wipe-in 0.45s cubic-bezier(0.16, 0.84, 0.28, 1) backwards;
+  }
+
+  /* The container fades; each direct child wipes in on its own beat. */
+  .animate-page-in {
+    position: relative;
+    animation: page-fade 0.18s ease both;
+  }
+
+  @keyframes page-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-page-in::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    transform-origin: left center;
+    pointer-events: none;
+    animation: nier-scan 0.75s cubic-bezier(0.22, 0.7, 0.2, 1) both;
+  }
+
+  .animate-page-in > * {
+    animation: nier-wipe-in 0.62s cubic-bezier(0.16, 0.84, 0.28, 1) backwards;
+  }
+
+  .animate-page-in > *:nth-child(1) { animation-delay: 0.02s; }
+  .animate-page-in > *:nth-child(2) { animation-delay: 0.07s; }
+  .animate-page-in > *:nth-child(3) { animation-delay: 0.12s; }
+  .animate-page-in > *:nth-child(4) { animation-delay: 0.17s; }
+  .animate-page-in > *:nth-child(5) { animation-delay: 0.22s; }
+  .animate-page-in > *:nth-child(6) { animation-delay: 0.27s; }
+  .animate-page-in > *:nth-child(n + 7) { animation-delay: 0.32s; }
 
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in-up,
-    .animate-page-in {
+    .animate-page-in,
+    .animate-page-in > * {
+      animation: page-fade 0.2s ease both;
+    }
+    .animate-page-in::after {
       animation: none;
-      opacity: 1;
-      transform: none;
+      opacity: 0;
     }
   }
 
