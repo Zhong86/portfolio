@@ -20,6 +20,33 @@ function fuzzyMatch(query: string, target: string): boolean {
   return qi === q.length;
 }
 
+/**
+ * True when the typed text already resolves to a complete, runnable command, so
+ * it should win over whatever the palette happens to have highlighted. Without
+ * this, a command that isn't in NAV_ITEMS (e.g. "sudo") gets swallowed by a
+ * fuzzy match. Half-typed arguments ("cd g", "theme ni") deliberately don't
+ * win — the palette suggestion is more useful there.
+ */
+function typedCommandWins(raw: string): boolean {
+  const parts = raw.trim().split(/\s+/);
+  const verb = parts[0]?.toLowerCase() ?? "";
+  const arg = parts[1];
+
+  switch (verb) {
+    case "sudo":
+    case "talos_ai":
+      return true;
+    case "cd":
+      return resolveCdTarget(arg ?? "home") !== null;
+    case "theme":
+      return arg !== undefined && normalizeTheme(arg) !== null;
+    case "sfx":
+      return arg !== undefined && normalizeSfxMode(arg) !== null;
+    default:
+      return false;
+  }
+}
+
 export default function Terminal() {
   const router = useRouter();
 
@@ -342,14 +369,14 @@ export default function Terminal() {
       });
       return;
     }
-    if (showPalette && e.key === "Tab") {
+    if (showPalette && e.key === "Tab" && !typedCommandWins(value)) {
       e.preventDefault();
       if (filtered[activeIndex]) selectItem(filtered[activeIndex]);
       return;
     }
     if (e.key === "Enter") {
       playSfx("select");
-      if (showPalette && filtered[activeIndex] && filtered.length > 0) {
+      if (showPalette && !typedCommandWins(value) && filtered[activeIndex] && filtered.length > 0) {
         runCommand(filtered[activeIndex].cmd);
         setValue("");
       } else {

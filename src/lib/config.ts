@@ -269,6 +269,17 @@ export const TOP_GOALS = [
   },
 ];
 
+/** The reminder headline on the goals page, stored in KV at `reminder:current`. */
+export type Reminder = {
+  /** The quote itself — the thing to keep in mind. */
+  text: string;
+  /** ISO timestamp of the last write. */
+  updatedAt: string;
+};
+
+/** Shown whenever KV has no reminder set. */
+export const DEFAULT_REMINDER = "Don't You Dare Go Hollow";
+
 export const WEEKLY_TO_OVERALL_MAP: Record<string, string> = {
   weekly_leetcode: "leetcode",
   weekly_dsa: "dsa_patterns",

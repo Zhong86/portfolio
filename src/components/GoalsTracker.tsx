@@ -1,6 +1,6 @@
 "use client";
 
-import { Category, WEEKLY_TO_OVERALL_MAP, CATEGORIES, TARGET_DATE, WEEKLY_GOALS, DOCS_LINK, TOP_GOALS } from "@/lib/config";
+import { Category, WEEKLY_TO_OVERALL_MAP, CATEGORIES, TARGET_DATE, WEEKLY_GOALS, DOCS_LINK } from "@/lib/config";
 import { useEffect, useMemo, useState } from "react";
 
 
@@ -194,17 +194,16 @@ export default function GoalsTracker() {
   // `now` stays null until mounted so server and first client render match (avoids hydration mismatch).
   const [now, setNow] = useState<number | null>(null);
   const [isSudo, setIsSudo] = useState(false);
+  // Kept for the overall-progress bar and for mirroring weekly deltas, even
+  // though the per-category grid is no longer rendered.
   const [progress, setProgress] = useState<Record<string, number>>({});
-  const [progressLoading, setProgressLoading] = useState(true);
   const [weeklyProgress, setWeeklyProgress] = useState<Record<string, number>>({});
   const [weeklyLoading, setWeeklyLoading] = useState(true);
 
   useEffect(() => {
     setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
 
-    fetchGoalsProgress()
-      .then((values) => setProgress(values))
-      .finally(() => setProgressLoading(false));
+    fetchGoalsProgress().then((values) => setProgress(values));
 
     fetchWeeklyProgress()
       .then(({ values }) => setWeeklyProgress(values))
@@ -221,16 +220,6 @@ export default function GoalsTracker() {
       window.removeEventListener("sudo-unlocked", handler);
     }
   }, []);
-
-  function updateCategory(id: string, next: number) {
-    // Optimistic update, then persist to KV.
-    setProgress((prev) => ({ ...prev, [id]: next }));
-    saveGoalsValue(id, next).then((ok) => {
-      if (!ok) {
-        fetchGoalsProgress().then((values) => setProgress(values));
-      }
-    });
-  }
 
   function updateWeeklyCategory(id: string, next: number) {
     const prev = weeklyProgress[id] ?? 0;
@@ -349,29 +338,6 @@ export default function GoalsTracker() {
         </a>
       </div>
 
-      {/* Top priorities */}
-      <div>
-        <div className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide mb-3">
-          top priorities
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {TOP_GOALS.map((goal) => (
-            <div
-              key={goal.num}
-              className="border border-hairline rounded-md bg-surface p-4 flex flex-col gap-2"
-            >
-              <span className="font-mono text-[11px] text-accent">{goal.num}</span>
-              <span className="font-mono text-[13.5px] text-text font-medium">
-                {goal.title}
-              </span>
-              <span className="font-sans text-[12.5px] text-text-dim leading-relaxed">
-                {goal.desc}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Weekly sprint */}
       <div className="border border-hairline rounded-md bg-surface overflow-hidden">
         <div className="px-4 py-2.5 border-b border-hairline font-mono text-[11px] text-text-dimmer flex justify-between">
@@ -418,30 +384,6 @@ export default function GoalsTracker() {
                 isSudo={isSudo}
                 allowOverflow
                 onChange={updateWeeklyCategory}
-              />
-            ))}
-        </div>
-      </div>
-
-      {/* Category trackers */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <span className="font-mono text-[11px] text-text-dimmer uppercase tracking-wide">
-            progress by category
-          </span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {progressLoading
-            ? CATEGORIES.map((cat) => (
-              <div key={cat.id} className="h-[104px] border border-hairline rounded-md bg-surface-2 animate-pulse" />
-            ))
-            : CATEGORIES.map((cat) => (
-              <CounterCard
-                key={cat.id}
-                category={cat}
-                value={progress[cat.id] ?? 0}
-                isSudo={isSudo}
-                onChange={updateCategory}
               />
             ))}
         </div>
