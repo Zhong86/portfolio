@@ -138,12 +138,12 @@ export default function ReminderHeadline() {
   return (
     <div
       onClick={startEditing}
-      className={`mb-8 border border-hairline rounded-md bg-surface overflow-hidden transition-all duration-200 ${clickable
-        ? "cursor-pointer hover:border-accent/70 hover:shadow-[0_0_0_1px_var(--color-accent),0_0_20px_2px_rgba(var(--color-accent-rgb,255,153,0),0.2)]"
+      className={`mb-8 border border-accent/50 rounded-md bg-surface overflow-hidden transition-all duration-200 ${clickable
+        ? "cursor-pointer hover:border-accent/80 hover:shadow-[0_0_0_1px_var(--color-accent),0_0_20px_2px_rgba(var(--color-accent-rgb,255,153,0),0.2)]"
         : ""
         }`}
     >
-      <div className="px-4 py-2.5 border-b border-hairline font-mono text-[11px] text-text-dimmer flex justify-between items-center">
+      <div className="px-4 py-2.5 border-b border-accent/25 font-mono text-[11px] text-text-dimmer flex justify-between items-center">
         <span className="text-text-dim">reminder.txt</span>
         <span className={denied ? "text-accent" : ""}>
           {denied
