@@ -2,11 +2,11 @@
 export const AI_MAX_MESSAGES = 5;
 export const SUDO_MAX_ATTEMPTS = 3;
 
-export type PaletteItem = { cmd: string; label: string; keyword: string };
+export type PaletteItem = { cmd: string; label: string; keyword: string; sudoOnly?: boolean };
 export const NAV_ITEMS: PaletteItem[] = [
   { cmd: "cd home", label: "go to homepage", keyword: "home" },
   { cmd: "cd about", label: "about me", keyword: "about" },
-  { cmd: "cd goals", label: "AWS internship goal tracker", keyword: "goals" },
+  { cmd: "cd goals", label: "AWS internship goal tracker", keyword: "goals", sudoOnly: true },
   { cmd: "cd stats", label: "github & leetcode stats", keyword: "stats" },
   { cmd: "cd projects", label: "projects applied / built", keyword: "projects" },
   { cmd: "cd contact", label: "contact info", keyword: "contact" },

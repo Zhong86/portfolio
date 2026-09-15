@@ -10,8 +10,10 @@ function isSudo(req: Request): boolean {
   return req.headers.get("x-sudo-token") === process.env.SUDO_PASSWORD;
 }
 
-// GET — returns { reminder: Reminder | null }
-export async function GET() {
+// GET — returns { reminder: Reminder | null } — requires sudo
+export async function GET(req: Request) {
+  if (!isSudo(req)) return new Response("Unauthorized", { status: 401 });
+
   const reminder = (await kv.get<Reminder>(KEY)) ?? null;
   return Response.json({ reminder });
 }

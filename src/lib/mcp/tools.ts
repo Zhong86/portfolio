@@ -34,6 +34,9 @@ export class ToolError extends Error {}
 
 const EDITABLE_TOPICS = Object.keys(INFO_TOPICS).filter(isEditableTopic);
 
+/** Topics behind the same sudo gate as the /goals page. */
+const SUDO_ONLY_TOPICS = new Set(["goals"]);
+
 function requireEditableTopic(topic: unknown): MarkdownTopic {
   if (typeof topic !== "string" || !isEditableTopic(topic)) {
     throw new ToolError(
@@ -51,11 +54,13 @@ export const MCP_TOOLS: McpTool[] = [
       "List every knowledge-base topic Billy's portfolio exposes, with a description of each and whether its full text can be edited.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
     requiresSudo: false,
-    handler: async () => {
-      const rows = Object.entries(INFO_TOPICS).map(
-        ([topic, description]) =>
-          `- ${topic} (${isEditableTopic(topic) ? "editable" : "read-only"}): ${description}`
-      );
+    handler: async (_args, ctx) => {
+      const rows = Object.entries(INFO_TOPICS)
+        .filter(([topic]) => ctx.sudo || !SUDO_ONLY_TOPICS.has(topic))
+        .map(
+          ([topic, description]) =>
+            `- ${topic} (${isEditableTopic(topic) ? "editable" : "read-only"}): ${description}`
+        );
       return rows.join("\n");
     },
   },
@@ -72,10 +77,15 @@ export const MCP_TOOLS: McpTool[] = [
       additionalProperties: false,
     },
     requiresSudo: false,
-    handler: async (args) => {
+    handler: async (args, ctx) => {
       if (typeof args.topic !== "string" || !(args.topic in INFO_TOPICS)) {
         throw new ToolError(
           `Unknown topic. Available topics: ${Object.keys(INFO_TOPICS).join(", ")}.`
+        );
+      }
+      if (SUDO_ONLY_TOPICS.has(args.topic) && !ctx.sudo) {
+        throw new ToolError(
+          `"${args.topic}" is a private topic. Send the admin password in an "x-sudo-token" header on the MCP request.`
         );
       }
       return loadInformation(args.topic);
@@ -130,7 +140,8 @@ export const MCP_TOOLS: McpTool[] = [
     description:
       "Read just this week's sprint checklist from Billy's goal tracker: each weekly goal with its current count, target, and how many are left. Cheaper than load_information(goals), which also returns long-term categories and priorities.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
-    requiresSudo: false,
+    // goals are a private section — keep MCP in step with the HTTP routes
+    requiresSudo: true,
     handler: async () => loadWeeklyProgress(),
   },
 ];

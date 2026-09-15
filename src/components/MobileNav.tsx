@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navItems } from "@/lib/navigation";
+import { visibleNavItems } from "@/lib/navigation";
+import { useSudo } from "@/lib/use-sudo";
 
 export default function MobileNav() {
   const pathname = usePathname();
-  const linkTargets = navItems.filter((item) => item.href !== "/");
+  const isSudo = useSudo();
+  const linkTargets = visibleNavItems(isSudo).filter((item) => item.href !== "/");
 
   return (
     <nav className="md:hidden sticky top-0 z-10 border-b border-hairline bg-bg/90 backdrop-blur-sm">

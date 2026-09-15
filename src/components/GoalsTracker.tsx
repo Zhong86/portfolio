@@ -2,6 +2,7 @@
 
 import { Category, WEEKLY_TO_OVERALL_MAP, CATEGORIES, TARGET_DATE, WEEKLY_GOALS, DOCS_LINK } from "@/lib/config";
 import { useEffect, useMemo, useState } from "react";
+import { sudoHeaders, sudoToken } from "@/lib/use-sudo";
 
 
 function formatCountdown(ms: number) {
@@ -24,12 +25,8 @@ function getWeekStart(date: Date): Date {
   return d;
 }
 
-function sudoToken(): string {
-  return localStorage.getItem("sudoToken") ?? "";
-}
-
 async function fetchGoalsProgress(): Promise<Record<string, number>> {
-  const res = await fetch("/api/goals-progress");
+  const res = await fetch("/api/goals-progress", { headers: sudoHeaders() });
   if (!res.ok) return {};
   const data = await res.json();
   return data.values ?? {};
@@ -52,7 +49,7 @@ async function saveGoalsValue(id: string, value: number): Promise<boolean> {
 }
 
 async function fetchWeeklyProgress(): Promise<{ weekKey: string; values: Record<string, number> }> {
-  const res = await fetch("/api/weekly-progress");
+  const res = await fetch("/api/weekly-progress", { headers: sudoHeaders() });
   if (!res.ok) return { weekKey: "", values: {} };
   return res.json();
 }

@@ -7,8 +7,10 @@ function isSudo(req: Request): boolean {
   return req.headers.get("x-sudo-token") === process.env.SUDO_PASSWORD;
 }
 
-// GET — returns { values: Record<categoryId, number> }
-export async function GET() {
+// GET — returns { values: Record<categoryId, number> } — requires sudo
+export async function GET(req: Request) {
+  if (!isSudo(req)) return new Response("Unauthorized", { status: 401 });
+
   const values = (await kv.get<Record<string, number>>(KEY)) ?? {};
   return Response.json({ values });
 }

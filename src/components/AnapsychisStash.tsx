@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import SectionHeading from "@/components/SectionHeading";
 
 type StashEntry = {
   slug: string;
@@ -12,18 +13,6 @@ type StashEntry = {
 
 function sudoToken(): string {
   return localStorage.getItem("sudoToken") ?? "";
-}
-
-function LockedScreen() {
-  return (
-    <div className="border border-hairline rounded-md bg-surface px-6 py-10 flex flex-col items-center gap-3 text-center">
-      <span className="font-mono text-[13px] text-accent">✗ permission denied</span>
-      <p className="font-mono text-[12px] text-text-dimmer max-w-[380px] leading-relaxed">
-        ~/anapsychis is a restricted path. run <span className="text-text-dim">sudo</span> in
-        the terminal below to authenticate.
-      </p>
-    </div>
-  );
 }
 
 function StashCard({
@@ -307,13 +296,14 @@ export default function AnapsychisStash() {
     }
   }
 
-  // Avoid a locked-screen flash before localStorage has been checked on mount.
-  if (isSudo === null) return null;
-
-  if (!isSudo) return <LockedScreen />;
+  // The stash is a private section of the goals page: stay invisible until
+  // sudo is confirmed, rather than advertising a locked path.
+  if (!isSudo) return null;
 
   return (
-    <div>
+    <section className="mt-16 pt-10 border-t border-hairline">
+      <SectionHeading path="~/.αναψυχής" label="private stash" />
+
       <div className="flex items-center justify-between mb-7">
         <button
           onClick={() => { setEditingEntry(undefined); setShowEditor(true); }}
@@ -359,6 +349,6 @@ export default function AnapsychisStash() {
           saving={saving}
         />
       )}
-    </div>
+    </section>
   );
 }

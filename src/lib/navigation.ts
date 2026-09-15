@@ -7,17 +7,33 @@ export type NavItem = {
   navLabel: string;
   /** segment used for matching, e.g. "about" (root page is "") */
   segment: string;
+  /** hidden from nav and unreachable by `cd` unless the sudo session is unlocked */
+  sudoOnly?: boolean;
 };
 
 export const navItems: NavItem[] = [
   { href: "/", fileLabel: "index.tsx", navLabel: "home", segment: "" },
   { href: "/about", fileLabel: "about.md", navLabel: "about", segment: "about" },
-  { href: "/goals", fileLabel: "goals.log", navLabel: "goals", segment: "goals" },
+  { href: "/goals", fileLabel: "goals.log", navLabel: "goals", segment: "goals", sudoOnly: true },
   { href: "/stats", fileLabel: "stats.json", navLabel: "stats", segment: "stats" },
   { href: "/projects", fileLabel: "projects/", navLabel: "work", segment: "projects" },
   { href: "/tools", fileLabel: "tools.json", navLabel: "tools", segment: "tools" },
   { href: "/contact", fileLabel: "contact.json", navLabel: "contact", segment: "contact" },
 ];
+
+/** The nav entries a visitor may see, given their sudo state. */
+export function visibleNavItems(isSudo: boolean | null): NavItem[] {
+  return isSudo ? navItems : navItems.filter((item) => !item.sudoOnly);
+}
+
+/** Routes that only exist for an unlocked sudo session. */
+const sudoOnlyHrefs = new Set(
+  navItems.filter((item) => item.sudoOnly).map((item) => item.href)
+);
+
+export function isSudoOnlyHref(href: string): boolean {
+  return sudoOnlyHrefs.has(href);
+}
 
 /** Maps terminal "cd" targets (including aliases) to a route href. */
 const cdAliases: Record<string, string> = {
@@ -37,14 +53,16 @@ const cdAliases: Record<string, string> = {
   activity: "/stats",
   tools: "/tools",
   contact: "/contact",
-  anapsychis: "/anapsychis",
+  anapsychis: "/goals",
 };
 
 /**
- * Resolves a `cd` target typed into the terminal to a route, or null if
- * the target doesn't match any known section.
+ * Resolves a `cd` target typed into the terminal to a route, or null if the
+ * target doesn't match any known section. Sudo-only sections resolve to null
+ * while locked, so they read as "no such directory" rather than advertising
+ * themselves.
  */
-export function resolveCdTarget(rawTarget: string): string | null {
+export function resolveCdTarget(rawTarget: string, isSudo: boolean | null = null): string | null {
   const cleaned = rawTarget
     .trim()
     .toLowerCase()
@@ -52,5 +70,7 @@ export function resolveCdTarget(rawTarget: string): string | null {
     .replace(/\/$/, "");
 
   const key = cleaned === "" ? "home" : cleaned;
-  return cdAliases[key] ?? null;
+  const href = cdAliases[key] ?? null;
+  if (href && !isSudo && isSudoOnlyHref(href)) return null;
+  return href;
 }

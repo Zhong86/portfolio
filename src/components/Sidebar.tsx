@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { navItems } from "@/lib/navigation";
+import { visibleNavItems } from "@/lib/navigation";
 import buildInfo from '@/lib/build-info.json';
 import { isModalOpen, isTypingTarget } from "@/lib/keys";
 import { playSfx } from "@/lib/sfx";
-import { useState, useEffect } from "react";
+import { useSudo } from "@/lib/use-sudo";
+import { useState, useEffect, useMemo } from "react";
 
 const UPTIME_START = new Date("2026-06-19T00:00:00Z").getTime(); 
 
@@ -22,6 +23,8 @@ function formatUptime(ms: number) {
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const isSudo = useSudo();
+  const navItems = useMemo(() => visibleNavItems(isSudo), [isSudo]);
   const [uptime, setUptime] = useState("");
   /** vim-style nav cursor; null until the user presses j/k, so nothing is highlighted on load */
   const [cursor, setCursor] = useState<number | null>(null);
@@ -45,14 +48,14 @@ export default function Sidebar() {
         e.preventDefault();
         const dir = e.key === "j" ? 1 : -1;
         const from = cursor ?? navItems.findIndex((item) => item.href === pathname);
-        // unknown route (e.g. /anapsychis) enters the list at either end
+        // unknown route enters the list at either end
         const start = from === -1 ? (dir === 1 ? -1 : 0) : from;
         setCursor((start + dir + navItems.length) % navItems.length);
         playSfx("move");
         return;
       }
 
-      if (e.key === "Enter" && cursor !== null) {
+      if (e.key === "Enter" && cursor !== null && navItems[cursor]) {
         e.preventDefault();
         playSfx("select");
         router.push(navItems[cursor].href);
@@ -60,7 +63,7 @@ export default function Sidebar() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [cursor, pathname, router]);
+  }, [cursor, pathname, router, navItems]);
 
   return (
     <aside className="hidden md:flex w-[250px] shrink-0 sticky top-0 h-[calc(100vh-52px)] border-r border-hairline px-[22px] py-7 flex-col">

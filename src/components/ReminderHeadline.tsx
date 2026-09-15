@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { DEFAULT_REMINDER, type Reminder } from "@/lib/config";
-
-function sudoToken(): string {
-  return localStorage.getItem("sudoToken") ?? "";
-}
+import { sudoHeaders, sudoToken } from "@/lib/use-sudo";
 
 /** "how long ago" in the same terse register as the rest of the page. */
 function sinceLabel(iso: string, now: number): string {
@@ -40,7 +37,7 @@ export default function ReminderHeadline() {
     setNow(Date.now());
     const interval = setInterval(() => setNow(Date.now()), 60000);
 
-    fetch("/api/reminder")
+    fetch("/api/reminder", { headers: sudoHeaders() })
       .then((res) => (res.ok ? res.json() : { reminder: null }))
       .then((data) => setReminder(data.reminder ?? null))
       .catch(() => setError("Failed to load reminder."))

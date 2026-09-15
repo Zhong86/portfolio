@@ -27,7 +27,7 @@ function fuzzyMatch(query: string, target: string): boolean {
  * fuzzy match. Half-typed arguments ("cd g", "theme ni") deliberately don't
  * win — the palette suggestion is more useful there.
  */
-function typedCommandWins(raw: string): boolean {
+function typedCommandWins(raw: string, isSudo: boolean): boolean {
   const parts = raw.trim().split(/\s+/);
   const verb = parts[0]?.toLowerCase() ?? "";
   const arg = parts[1];
@@ -37,7 +37,7 @@ function typedCommandWins(raw: string): boolean {
     case "talos_ai":
       return true;
     case "cd":
-      return resolveCdTarget(arg ?? "home") !== null;
+      return resolveCdTarget(arg ?? "home", isSudo) !== null;
     case "theme":
       return arg !== undefined && normalizeTheme(arg) !== null;
     case "sfx":
@@ -227,21 +227,27 @@ export default function Terminal() {
     }
   }
 
+  // sudo-only sections stay out of the palette entirely while locked
+  const paletteItems = useMemo(
+    () => NAV_ITEMS.filter((item) => sudoUnlocked || !item.sudoOnly),
+    [sudoUnlocked]
+  );
+
   const filtered = useMemo(() => {
     if (chatMode) return [];
     const trimmed = value.trimStart();
     const cdMatch = trimmed.match(/^cd\s*(.*)$/i);
     if (cdMatch) {
       const rest = cdMatch[1];
-      return NAV_ITEMS.filter(
+      return paletteItems.filter(
         (item) => item.cmd.startsWith("cd ") && fuzzyMatch(rest, item.keyword)
       );
     }
-    if (!trimmed) return NAV_ITEMS;
-    return NAV_ITEMS.filter(
+    if (!trimmed) return paletteItems;
+    return paletteItems.filter(
       (item) => fuzzyMatch(trimmed, item.cmd) || fuzzyMatch(trimmed, item.label)
     );
-  }, [value, chatMode]);
+  }, [value, chatMode, paletteItems]);
 
   const showPalette = focused && filtered.length > 0 && !chatMode;
 
@@ -259,7 +265,7 @@ export default function Terminal() {
     const cmd = parts[0].toLowerCase();
 
     if (cmd === "cd") {
-      const target = resolveCdTarget(parts[1] ?? "home");
+      const target = resolveCdTarget(parts[1] ?? "home", sudoUnlocked);
       if (target) { router.push(target); setValue(""); inputRef.current?.blur(); }
       else showError(`cd: no such section: ${parts[1] ?? ""}`);
       return;
@@ -369,14 +375,14 @@ export default function Terminal() {
       });
       return;
     }
-    if (showPalette && e.key === "Tab" && !typedCommandWins(value)) {
+    if (showPalette && e.key === "Tab" && !typedCommandWins(value, sudoUnlocked)) {
       e.preventDefault();
       if (filtered[activeIndex]) selectItem(filtered[activeIndex]);
       return;
     }
     if (e.key === "Enter") {
       playSfx("select");
-      if (showPalette && !typedCommandWins(value) && filtered[activeIndex] && filtered.length > 0) {
+      if (showPalette && !typedCommandWins(value, sudoUnlocked) && filtered[activeIndex] && filtered.length > 0) {
         runCommand(filtered[activeIndex].cmd);
         setValue("");
       } else {
