@@ -331,7 +331,7 @@ export default function AnapsychisStash() {
   if (!isSudo) return null;
 
   return (
-    <section className="mt-20 pt-12 border-t border-hairline">
+    <section className="mt-12 pt-8 border-t border-hairline">
       <div className="flex items-center justify-between gap-3 mb-8">
         <div className="flex items-center rounded border border-hairline overflow-hidden">
           {(["grid", "row"] as const).map((mode) => (
