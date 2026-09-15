@@ -138,7 +138,7 @@ export default function ReminderHeadline() {
   return (
     <div
       onClick={startEditing}
-      className={`mb-8 border border-accent/50 rounded-md bg-surface overflow-hidden transition-all duration-200 ${clickable
+      className={`mb-8 border-3 border-accent/50 rounded-md bg-surface overflow-hidden transition-all duration-200 ${clickable
         ? "cursor-pointer hover:border-accent/80 hover:shadow-[0_0_0_1px_var(--color-accent),0_0_20px_2px_rgba(var(--color-accent-rgb,255,153,0),0.2)]"
         : ""
         }`}
