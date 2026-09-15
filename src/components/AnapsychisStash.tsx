@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import SectionHeading from "@/components/SectionHeading";
 
 type StashEntry = {
   slug: string;
@@ -11,19 +10,34 @@ type StashEntry = {
   imageUrl?: string;
 };
 
+/** Grid puts the cover above the text; row puts it alongside, one entry per line. */
+type StashView = "grid" | "row";
+
+const VIEW_KEY = "stashView";
+
+function layoutClass(view: StashView): string {
+  return view === "row"
+    ? "flex flex-col gap-2"
+    : "grid grid-cols-1 sm:grid-cols-2 gap-2";
+}
+
 function sudoToken(): string {
   return localStorage.getItem("sudoToken") ?? "";
 }
 
 function StashCard({
   entry,
+  view,
   onDelete,
   onEdit,
 }: {
   entry: StashEntry;
+  view: StashView;
   onDelete: (slug: string) => void;
   onEdit: (entry: StashEntry) => void;
 }) {
+  const isRow = view === "row";
+
   return (
     <div className="border border-hairline rounded-md bg-surface hover:bg-surface-2 transition-colors group relative
       transition-all duration-200
@@ -34,10 +48,16 @@ function StashCard({
         href={entry.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex flex-col"
+        className={isRow ? "flex flex-row items-stretch" : "flex flex-col"}
       >
         {entry.imageUrl && (
-          <div className="w-full aspect-[3/4] sm:aspect-video bg-surface-2 overflow-hidden rounded-t-md">
+          <div
+            className={
+              isRow
+                ? "w-[92px] sm:w-[132px] shrink-0 bg-surface-2 overflow-hidden rounded-l-md"
+                : "w-full aspect-[3/4] sm:aspect-video bg-surface-2 overflow-hidden rounded-t-md"
+            }
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={entry.imageUrl}
@@ -215,6 +235,11 @@ export default function AnapsychisStash() {
   const [editingEntry, setEditingEntry] = useState<StashEntry | undefined>(undefined);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Safe to read storage during init: nothing renders until `isSudo` resolves
+  // after mount, so the server and first client render are both empty.
+  const [view, setView] = useState<StashView>(() =>
+    typeof window !== "undefined" && localStorage.getItem(VIEW_KEY) === "row" ? "row" : "grid"
+  );
 
   useEffect(() => {
     const check = () => setIsSudo(localStorage.getItem("sudoUnlocked") === "true");
@@ -222,6 +247,11 @@ export default function AnapsychisStash() {
     window.addEventListener("sudo-unlocked", check);
     return () => window.removeEventListener("sudo-unlocked", check);
   }, []);
+
+  function chooseView(next: StashView) {
+    setView(next);
+    localStorage.setItem(VIEW_KEY, next);
+  }
 
   async function fetchEntries() {
     setLoading(true);
@@ -301,13 +331,28 @@ export default function AnapsychisStash() {
   if (!isSudo) return null;
 
   return (
-    <section className="mt-16 pt-10 border-t border-hairline">
-      <SectionHeading path="~/.αναψυχής" label="private stash" />
+    <section>
+      <div className="flex items-center justify-between gap-3 mb-7">
+        <div className="flex items-center rounded border border-hairline overflow-hidden">
+          {(["grid", "row"] as const).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => chooseView(mode)}
+              aria-pressed={view === mode}
+              className={`font-mono text-[11px] px-2.5 py-1.5 transition-colors ${
+                view === mode
+                  ? "bg-accent/15 text-accent"
+                  : "text-text-dimmer hover:text-text hover:bg-surface"
+              }`}
+            >
+              {mode}
+            </button>
+          ))}
+        </div>
 
-      <div className="flex items-center justify-between mb-7">
         <button
           onClick={() => { setEditingEntry(undefined); setShowEditor(true); }}
-          className="font-mono text-[12px] px-3.5 py-1.5 rounded border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 transition-colors ml-auto"
+          className="font-mono text-[12px] px-3.5 py-1.5 rounded border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
         >
           + new entry
         </button>
@@ -321,7 +366,7 @@ export default function AnapsychisStash() {
       )}
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className={layoutClass(view)}>
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-[72px] border border-hairline rounded-md bg-surface animate-pulse" />
           ))}
@@ -329,11 +374,12 @@ export default function AnapsychisStash() {
       ) : entries.length === 0 ? (
         <p className="font-mono text-[12px] text-center text-text-dimmer">stash is empty</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className={layoutClass(view)}>
           {entries.map((entry) => (
             <StashCard
               key={entry.slug}
               entry={entry}
+              view={view}
               onDelete={handleDelete}
               onEdit={(e) => { setEditingEntry(e); setShowEditor(true); }}
             />
