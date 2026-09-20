@@ -312,7 +312,7 @@ export default function GoalsTracker() {
                 Land an <span className="text-accent">AWS Backend Internship</span>
               </div>
               <div className="font-mono text-[12px] text-text-dim mt-1">
-                Java 21 · Spring Boot 4 · PostgreSQL · AWS — Semester 6 roadmap
+                AWS — Semester 7 roadmap
               </div>
             </div>
 
