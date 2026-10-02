@@ -252,8 +252,7 @@ export const CATEGORIES: Category[] = [
 ];
 
 export const WEEKLY_GOALS: Category[] = [
-  { id: "weekly_leetcode", label: "LeetCode Questions", unit: "this week", target: 7 },
-  { id: "weekly_dsa", label: "DSA Concepts", unit: "this week", target: 5 },
+  { id: "weekly_leetcode", label: "LeetCode Questions", unit: "this week", target: 10 },
 ];
 
 export const TOP_GOALS = [
@@ -282,7 +281,6 @@ export const DEFAULT_REMINDER = "Don't You Dare Go Hollow";
 
 export const WEEKLY_TO_OVERALL_MAP: Record<string, string> = {
   weekly_leetcode: "leetcode",
-  weekly_dsa: "dsa_patterns",
 };
 
 // -------------------------- Contacts ---------------------

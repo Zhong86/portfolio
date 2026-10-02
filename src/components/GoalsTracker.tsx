@@ -368,7 +368,7 @@ export default function GoalsTracker() {
           </div>
         </div>
 
-        <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className={`px-5 pb-5 grid grid-cols-1 ${WEEKLY_GOALS.length > 1 ? "sm:grid-cols-2" : ""} gap-3`}>
           {weeklyLoading
             ? WEEKLY_GOALS.map((goal) => (
               <div key={goal.id} className="h-[104px] border border-hairline rounded-md bg-surface-2 animate-pulse" />

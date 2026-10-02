@@ -6,7 +6,7 @@ function isSudo(req: Request): boolean {
   return req.headers.get("x-sudo-token") === process.env.SUDO_PASSWORD;
 }
 
-// GET — returns { weekKey, values: { weekly_leetcode, weekly_dsa, weekly_project_phases } } — requires sudo
+// GET — returns { weekKey, values: { weekly_leetcode } } — requires sudo
 export async function GET(req: Request) {
   if (!isSudo(req)) return new Response("Unauthorized", { status: 401 });
 
